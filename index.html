@@ -219,83 +219,57 @@
         </label>
       </div>
 
-      <!-- 實際被 html2canvas 擷取的卡片容器 -->
-      <div id="exportCard" class="bg-white rounded-2xl border-2 border-slate-800 shadow-lg overflow-hidden">
-        <!-- 卡片頁首 -->
-        <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between gap-3 border-b-4 border-red-600">
-          <div class="flex items-center gap-3 min-w-0">
-            <div class="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center shrink-0">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="3.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5" />
-              </svg>
+      <!-- 實際被 html2canvas 擷取的卡片容器：精簡報表風格 -->
+      <div id="exportCard" class="bg-white border-2 border-slate-900 text-slate-900">
+        <!-- 報表標題列 -->
+        <div class="px-5 py-3.5 border-b-2 border-slate-900 flex items-baseline justify-between">
+          <div class="text-lg font-black tracking-wide text-slate-900">救護現場處置紀錄表</div>
+          <div class="text-xs font-mono font-bold text-slate-600" id="previewTimeBadge">--/-- --:--</div>
+        </div>
+
+        <!-- 報表表格區 -->
+        <div class="divide-y divide-slate-300 text-sm">
+          <!-- 基本資料 -->
+          <div class="grid grid-cols-2 divide-x divide-slate-300">
+            <div class="px-4 py-3">
+              <div class="text-xs font-bold text-slate-500 mb-0.5">患者姓名</div>
+              <div id="previewName" class="text-base font-black text-slate-900">未填寫</div>
             </div>
-            <div class="min-w-0">
-              <div class="text-lg font-black tracking-wider leading-snug">救護現場處置紀錄單</div>
-              <div class="text-[11px] text-slate-300 font-mono tracking-wider leading-tight mt-0.5">EMS PRE-HOSPITAL CARE RECORD</div>
+            <div class="px-4 py-3">
+              <div class="text-xs font-bold text-slate-500 mb-0.5">生理性別</div>
+              <div id="previewGender" class="text-base font-black text-slate-900">未選取</div>
             </div>
           </div>
-          <div class="shrink-0 bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-center">
-            <div class="text-xs font-mono font-bold text-amber-300 leading-tight whitespace-nowrap" id="previewTimeBadge">
-              --/-- --:--
-            </div>
+
+          <!-- 呼吸道處置 -->
+          <div id="previewRowAirway" class="px-4 py-3 flex items-baseline justify-between gap-4">
+            <div class="text-xs font-bold text-slate-600 shrink-0 w-24">呼吸道處置</div>
+            <div id="previewAirwayTags" class="flex-1 text-base font-bold text-slate-900 text-right"></div>
+          </div>
+
+          <!-- 呼吸處置 -->
+          <div id="previewRowBreathing" class="px-4 py-3 flex items-baseline justify-between gap-4">
+            <div class="text-xs font-bold text-slate-600 shrink-0 w-24">呼吸處置</div>
+            <div id="previewBreathingTags" class="flex-1 text-base font-bold text-slate-900 text-right"></div>
+          </div>
+
+          <!-- 循環處置 -->
+          <div id="previewRowCirculation" class="px-4 py-3 flex items-baseline justify-between gap-4">
+            <div class="text-xs font-bold text-slate-600 shrink-0 w-24">循環處置</div>
+            <div id="previewCirculationTags" class="flex-1 text-base font-bold text-slate-900 text-right"></div>
+          </div>
+
+          <!-- 其他處置 -->
+          <div id="previewRowOther" class="px-4 py-3">
+            <div class="text-xs font-bold text-slate-600 mb-1">其他處置 / 備註</div>
+            <div id="previewOther" class="text-base font-bold text-slate-900 whitespace-pre-wrap break-words leading-relaxed">無補充說明</div>
           </div>
         </div>
 
-        <!-- 卡片內容區 -->
-        <div class="p-5 space-y-4 bg-white">
-          
-          <!-- 基本資料列 -->
-          <div class="grid grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-            <div class="col-span-2 border-r border-slate-200 pr-3">
-              <div class="text-xs font-bold text-slate-400 mb-1 leading-tight">患者姓名 PATIENT NAME</div>
-              <div id="previewName" class="text-xl font-black text-slate-900 tracking-wide leading-snug">未填寫</div>
-            </div>
-            <div class="pl-1">
-              <div class="text-xs font-bold text-slate-400 mb-1 leading-tight">生理性別 SEX</div>
-              <div id="previewGender" class="text-xl font-black text-slate-900 leading-snug">未選取</div>
-            </div>
-          </div>
-
-          <!-- 處置清單明細 -->
-          <div class="space-y-3">
-            <!-- 呼吸道 -->
-            <div id="previewRowAirway" class="rounded-xl border border-slate-200 p-3.5">
-              <div class="mb-2.5">
-                <span class="inline-block text-xs font-black text-blue-800 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200 leading-none">呼吸道處置 AIRWAY</span>
-              </div>
-              <div id="previewAirwayTags" class="flex flex-wrap gap-2"></div>
-            </div>
-
-            <!-- 呼吸 -->
-            <div id="previewRowBreathing" class="rounded-xl border border-slate-200 p-3.5">
-              <div class="mb-2.5">
-                <span class="inline-block text-xs font-black text-teal-800 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200 leading-none">呼吸處置 BREATHING</span>
-              </div>
-              <div id="previewBreathingTags" class="flex flex-wrap gap-2"></div>
-            </div>
-
-            <!-- 循環 -->
-            <div id="previewRowCirculation" class="rounded-xl border border-slate-200 p-3.5">
-              <div class="mb-2.5">
-                <span class="inline-block text-xs font-black text-red-800 bg-red-50 px-2.5 py-1 rounded-md border border-red-200 leading-none">循環處置 CIRCULATION</span>
-              </div>
-              <div id="previewCirculationTags" class="flex flex-wrap gap-2"></div>
-            </div>
-
-            <!-- 其他處置 -->
-            <div id="previewRowOther" class="rounded-xl border border-slate-200 p-3.5 bg-amber-50/40">
-              <div class="text-xs font-black text-amber-900 mb-1.5 leading-tight">
-                其他處置與補充說明 OTHER NOTES
-              </div>
-              <div id="previewOther" class="text-sm sm:text-base font-bold text-slate-800 whitespace-pre-wrap break-words leading-relaxed">無補充說明</div>
-            </div>
-          </div>
-
-          <!-- 卡片頁尾時間戳記 -->
-          <div class="pt-2.5 border-t border-dashed border-slate-300 flex items-center justify-between text-[11px] text-slate-400 font-mono leading-tight">
-            <span>EMS FIELD LOG SYSTEM</span>
-            <span id="previewFullTimestamp">記錄時間：--</span>
-          </div>
+        <!-- 報表頁尾 -->
+        <div class="px-4 py-2 bg-slate-50 border-t border-slate-300 flex items-center justify-between text-[11px] font-mono text-slate-500">
+          <span>EMS RECORD</span>
+          <span id="previewFullTimestamp">記錄時間：--</span>
         </div>
       </div>
     </section>
@@ -379,7 +353,7 @@
 
   <script>
     // =========================================================================
-    // 應用程式狀態與類別樣式設定
+    // 核心資料狀態與選項定義
     // =========================================================================
     const state = {
       gender: '',
@@ -397,116 +371,121 @@
     const CATEGORY_STYLES = {
       airway: {
         activeBtn: ['bg-blue-700', 'border-blue-800', 'text-white', 'shadow-md', 'ring-2', 'ring-blue-300'],
-        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700'],
-        activeTag: 'bg-blue-700 text-white border-blue-800'
+        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700']
       },
       breathing: {
         activeBtn: ['bg-teal-700', 'border-teal-800', 'text-white', 'shadow-md', 'ring-2', 'ring-teal-300'],
-        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700'],
-        activeTag: 'bg-teal-700 text-white border-teal-800'
+        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700']
       },
       circulation: {
         activeBtn: ['bg-red-600', 'border-red-700', 'text-white', 'shadow-md', 'ring-2', 'ring-red-300'],
-        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700'],
-        activeTag: 'bg-red-600 text-white border-red-700'
+        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700']
       }
     };
 
     // =========================================================================
-    // 時間格式化與初始化
+    // 時間處理與格式化函式
     // =========================================================================
-    function setNowTime(notify = false) {
+    function setNowTime(showNotify = false) {
       const now = new Date();
-      const pad = (n) => String(n).padStart(2, '0');
-      const localIso = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
-      document.getElementById('recordTime').value = localIso;
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+
+      const inputEl = document.getElementById('recordTime');
+      if (inputEl) {
+        inputEl.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+      }
       updatePreview();
-      if (notify) {
+      if (showNotify) {
         showToast('已更新為目前系統時間', '🕒');
       }
     }
 
     function getFormattedDateTime() {
-      const raw = document.getElementById('recordTime').value;
-      if (!raw) {
-        return { display: '未設定時間', short: '--/-- --:--', fileTag: '00000000_0000' };
+      const rawVal = document.getElementById('recordTime').value;
+      const d = rawVal ? new Date(rawVal) : new Date();
+      if (isNaN(d.getTime())) {
+        return { short: '--/-- --:--', display: '--', fileTag: '00000000_0000' };
       }
-      const [datePart, timePart] = raw.split('T');
-      const [y, m, d] = datePart.split('-');
-      const [hh, mm] = (timePart || '00:00').split(':');
+
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+
       return {
-        display: `${y}/${m}/${d} ${hh}:${mm}`,
-        short: `${m}/${d} ${hh}:${mm}`,
-        fileTag: `${y}${m}${d}_${hh}${mm}`
+        short: `${month}/${day} ${hours}:${minutes}`,
+        display: `${year}/${month}/${day} ${hours}:${minutes}`,
+        fileTag: `${year}${month}${day}_${hours}${minutes}`
       };
     }
 
     // =========================================================================
-    // 互動點擊處理：生理性別 & 處置項目
+    // 生理性別與處置按鈕互動邏輯
     // =========================================================================
-    function selectGender(btnElement) {
-      const val = btnElement.getAttribute('data-value');
-      const allBtns = document.querySelectorAll('.gender-btn');
+    function selectGender(btn) {
+      const val = btn.getAttribute('data-value');
+      const isAlreadySelected = state.gender === val;
 
-      // 若點擊已選取的按鈕，則取消選取
-      if (state.gender === val) {
-        state.gender = '';
-      } else {
-        state.gender = val;
-      }
-
-      allBtns.forEach(b => {
-        const bVal = b.getAttribute('data-value');
+      // 清除所有性別按鈕選取樣式
+      document.querySelectorAll('.gender-btn').forEach(b => {
         b.classList.remove(
           'bg-blue-700', 'border-blue-800', 'ring-blue-300',
           'bg-rose-600', 'border-rose-700', 'ring-rose-300',
           'text-white', 'shadow-md', 'ring-2'
         );
         b.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-700');
-
-        if (state.gender === bVal) {
-          b.classList.remove('bg-slate-50', 'border-slate-200', 'text-slate-700');
-          if (bVal === '男') {
-            b.classList.add('bg-blue-700', 'border-blue-800', 'text-white', 'shadow-md', 'ring-2', 'ring-blue-300');
-          } else {
-            b.classList.add('bg-rose-600', 'border-rose-700', 'text-white', 'shadow-md', 'ring-2', 'ring-rose-300');
-          }
-        }
       });
 
+      if (isAlreadySelected) {
+        state.gender = '';
+      } else {
+        state.gender = val;
+        btn.classList.remove('bg-slate-50', 'border-slate-200', 'text-slate-700');
+        if (val === '男') {
+          btn.classList.add('bg-blue-700', 'border-blue-800', 'text-white', 'shadow-md', 'ring-2', 'ring-blue-300');
+        } else {
+          btn.classList.add('bg-rose-600', 'border-rose-700', 'text-white', 'shadow-md', 'ring-2', 'ring-rose-300');
+        }
+      }
       updatePreview();
     }
 
-    function toggleTreatment(btnElement) {
-      const category = btnElement.parentElement.getAttribute('data-category');
-      const value = btnElement.getAttribute('data-value');
+    function toggleTreatment(btn) {
+      const category = btn.parentElement.getAttribute('data-category');
+      const val = btn.getAttribute('data-value');
       const styleSet = CATEGORY_STYLES[category];
-      const idx = state[category].indexOf(value);
+      const list = state[category];
+      const idx = list.indexOf(val);
 
       if (idx > -1) {
-        state[category].splice(idx, 1);
-        btnElement.classList.remove(...styleSet.activeBtn);
-        btnElement.classList.add(...styleSet.inactiveBtn);
+        // 取消選取
+        list.splice(idx, 1);
+        btn.classList.remove(...styleSet.activeBtn);
+        btn.classList.add(...styleSet.inactiveBtn);
       } else {
-        state[category].push(value);
-        btnElement.classList.remove(...styleSet.inactiveBtn);
-        btnElement.classList.add(...styleSet.activeBtn);
+        // 加入選取，並依照選項定義順序排列
+        list.push(val);
+        const order = ALL_OPTIONS[category];
+        state[category].sort((a, b) => order.indexOf(a) - order.indexOf(b));
+        btn.classList.remove(...styleSet.inactiveBtn);
+        btn.classList.add(...styleSet.activeBtn);
       }
-
       updatePreview();
     }
 
     // =========================================================================
-    // 即時更新匯出圖片預覽卡
+    // 即時更新匯出圖片預覽卡 (精簡報表模式)
     // =========================================================================
     function renderCategoryTags(category, containerId, rowId, hideUnselected) {
       const container = document.getElementById(containerId);
       const row = document.getElementById(rowId);
       const selectedList = state[category];
       const options = ALL_OPTIONS[category];
-      const activeClass = CATEGORY_STYLES[category].activeTag;
-
-      container.innerHTML = '';
 
       if (hideUnselected && selectedList.length === 0) {
         row.classList.add('hidden');
@@ -515,28 +494,14 @@
         row.classList.remove('hidden');
       }
 
-      options.forEach(opt => {
-        const isSelected = selectedList.includes(opt);
-        if (hideUnselected && !isSelected) return;
-
-        const badge = document.createElement('div');
-        if (isSelected) {
-          badge.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-sm font-black ${activeClass}`;
-          badge.innerHTML = `
-            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-            <span class="leading-none">${opt}</span>
-          `;
-        } else {
-          badge.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 text-sm font-bold';
-          badge.innerHTML = `
-            <span class="w-3.5 h-3.5 rounded-xs border-2 border-slate-300 inline-block shrink-0"></span>
-            <span class="leading-none">${opt}</span>
-          `;
-        }
-        container.appendChild(badge);
-      });
+      if (hideUnselected) {
+        container.textContent = selectedList.join('、');
+        container.className = 'flex-1 text-base font-black text-slate-900 text-right';
+      } else {
+        const formatted = options.map(opt => selectedList.includes(opt) ? `[✓] ${opt}` : `[ ] ${opt}`).join('　');
+        container.textContent = formatted;
+        container.className = 'flex-1 text-sm font-bold text-slate-800 text-right leading-relaxed';
+      }
     }
 
     function updatePreview() {
@@ -549,25 +514,23 @@
       const previewNameEl = document.getElementById('previewName');
       if (nameVal) {
         previewNameEl.textContent = nameVal;
-        previewNameEl.classList.remove('text-slate-400');
-        previewNameEl.classList.add('text-slate-900');
+        previewNameEl.className = 'text-base font-black text-slate-900';
       } else {
         previewNameEl.textContent = '未填寫';
-        previewNameEl.classList.remove('text-slate-900');
-        previewNameEl.classList.add('text-slate-400');
+        previewNameEl.className = 'text-base font-bold text-slate-400';
       }
 
       // 性別
       const previewGenderEl = document.getElementById('previewGender');
       if (state.gender === '男') {
-        previewGenderEl.textContent = '♂ 男性';
-        previewGenderEl.className = 'text-xl font-black text-blue-700';
+        previewGenderEl.textContent = '男性';
+        previewGenderEl.className = 'text-base font-black text-slate-900';
       } else if (state.gender === '女') {
-        previewGenderEl.textContent = '♀ 女性';
-        previewGenderEl.className = 'text-xl font-black text-rose-600';
+        previewGenderEl.textContent = '女性';
+        previewGenderEl.className = 'text-base font-black text-slate-900';
       } else {
         previewGenderEl.textContent = '未選取';
-        previewGenderEl.className = 'text-xl font-black text-slate-400';
+        previewGenderEl.className = 'text-base font-bold text-slate-400';
       }
 
       // 處置項目
@@ -583,16 +546,14 @@
       if (otherVal) {
         previewRowOther.classList.remove('hidden');
         previewOtherEl.textContent = otherVal;
-        previewOtherEl.classList.remove('text-slate-400');
-        previewOtherEl.classList.add('text-slate-800');
+        previewOtherEl.className = 'text-base font-bold text-slate-900 whitespace-pre-wrap break-words leading-relaxed';
       } else {
         if (hideUnselected) {
           previewRowOther.classList.add('hidden');
         } else {
           previewRowOther.classList.remove('hidden');
-          previewOtherEl.textContent = '無補充說明';
-          previewOtherEl.classList.remove('text-slate-800');
-          previewOtherEl.classList.add('text-slate-400');
+          previewOtherEl.textContent = '無';
+          previewOtherEl.className = 'text-base font-bold text-slate-400 whitespace-pre-wrap break-words leading-relaxed';
         }
       }
     }
