@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>EMS 救護現場處置記錄表</title>
+  <title>EMS 到院前心電圖患者基本資料</title>
   <!-- 引入 Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- 引入 html2canvas 用於將記錄卡片轉換為高畫質圖片 -->
+  <!-- 引入 html2canvas 用於將報表轉換為高畫質圖片 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <!-- 引入 Google Fonts (Inter & Noto Sans TC) 提升中文與數字辨識度 -->
+  <!-- 引入 Google Fonts (Inter & Noto Sans TC) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -20,35 +20,27 @@
           fontFamily: {
             sans: ['"Noto Sans TC"', 'Inter', 'sans-serif'],
             mono: ['Inter', 'monospace'],
-          },
-          colors: {
-            ems: {
-              navy: '#0F172A',
-              blue: '#1D4ED8',
-              red: '#DC2626',
-              light: '#F8FAFC',
-            }
           }
         }
       }
     }
   </script>
 </head>
-<body class="bg-slate-100 text-slate-900 font-sans antialiased selection:bg-blue-200 pb-28">
+<body class="bg-slate-100 text-slate-900 font-sans antialiased selection:bg-red-200 pb-28">
 
-  <!-- 頂部專業救護標題列 -->
+  <!-- 頂部專業心電圖通報標題列 -->
   <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md border-b-4 border-red-600">
     <div class="max-w-2xl mx-auto px-4 py-3.5 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <!-- 醫療十字圖示 -->
+        <!-- 心電圖波形圖示 -->
         <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center shadow-inner shrink-0">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h4l2-7 4 14 3-9 2 2h3" />
           </svg>
         </div>
         <div>
-          <h1 class="text-lg sm:text-xl font-black tracking-wide leading-tight">救護現場處置記錄</h1>
-          <p class="text-xs text-slate-400 font-medium">EMS Field Treatment Record</p>
+          <h1 class="text-lg sm:text-xl font-black tracking-wide leading-tight">到院前心電圖患者資料</h1>
+          <p class="text-xs text-slate-400 font-medium">Pre-hospital 12-Lead ECG Report</p>
         </div>
       </div>
       <!-- 頂部快速重置按鈕 -->
@@ -68,20 +60,20 @@
     <section class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200">
       <div class="flex items-center justify-between mb-2.5">
         <label for="recordTime" class="text-sm font-extrabold text-slate-700 flex items-center space-x-1.5">
-          <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-          <span>處置記錄時間</span>
+          <span class="w-2 h-2 rounded-full bg-red-600"></span>
+          <span>心電圖施作 / 通報時間</span>
         </label>
-        <button type="button" onclick="setNowTime(true)" class="text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 active:bg-blue-200 px-3 py-1.5 rounded-lg transition flex items-center space-x-1">
+        <button type="button" onclick="setNowTime(true)" class="text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 active:bg-red-200 px-3 py-1.5 rounded-lg transition flex items-center space-x-1">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <span>更新為現在時間</span>
         </button>
       </div>
-      <input type="datetime-local" id="recordTime" oninput="updatePreview()" class="w-full rounded-xl border-2 border-slate-200 bg-slate-50 px-3.5 py-3 text-base sm:text-lg font-mono font-bold text-slate-800 focus:border-blue-600 focus:bg-white focus:outline-none transition">
+      <input type="datetime-local" id="recordTime" oninput="updatePreview()" class="w-full rounded-xl border-2 border-slate-200 bg-slate-50 px-3.5 py-3 text-base sm:text-lg font-mono font-bold text-slate-800 focus:border-red-600 focus:bg-white focus:outline-none transition">
     </section>
 
-    <!-- 區塊 1 & 2：基本資料（患者姓名、生理性別） -->
+    <!-- 區塊 1 & 2：基本資料（1. 性別、2. 年齡區間） -->
     <section class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 space-y-5">
       <div class="border-b border-slate-100 pb-2">
         <h2 class="text-base font-black text-slate-800 flex items-center space-x-2">
@@ -90,186 +82,168 @@
         </h2>
       </div>
 
-      <!-- 1. 患者姓名 -->
+      <!-- 1. 性別 -->
       <div>
-        <label for="patientName" class="block text-sm font-bold text-slate-700 mb-2">
-          患者姓名 <span class="text-slate-400 font-normal text-xs">（若未知可填無名氏或留白）</span>
-        </label>
-        <input type="text" id="patientName" placeholder="請輸入患者姓名..." oninput="updatePreview()" class="w-full rounded-xl border-2 border-slate-200 bg-slate-50 px-4 py-3.5 text-lg font-bold text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:bg-white focus:outline-none transition">
-      </div>
-
-      <!-- 2. 生理性別 -->
-      <div>
-        <span class="block text-sm font-bold text-slate-700 mb-2">生理性別 <span class="text-slate-400 font-normal text-xs">（單選，再次點擊可取消）</span></span>
+        <span class="block text-sm font-bold text-slate-700 mb-2">1. 性別 <span class="text-slate-400 font-normal text-xs">（單選，再次點擊可取消）</span></span>
         <div class="grid grid-cols-2 gap-3" id="genderGroup">
-          <button type="button" data-value="男" onclick="selectGender(this)" class="gender-btn py-4 px-4 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-black text-lg flex items-center justify-center space-x-2 transition-all active:scale-[0.98]">
+          <button type="button" data-value="男" onclick="selectSingle('gender', this)" class="single-btn py-3.5 px-4 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-black text-lg flex items-center justify-center space-x-2 transition-all active:scale-[0.98]">
             <span class="text-xl">♂</span>
             <span>男性</span>
           </button>
-          <button type="button" data-value="女" onclick="selectGender(this)" class="gender-btn py-4 px-4 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-black text-lg flex items-center justify-center space-x-2 transition-all active:scale-[0.98]">
+          <button type="button" data-value="女" onclick="selectSingle('gender', this)" class="single-btn py-3.5 px-4 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-black text-lg flex items-center justify-center space-x-2 transition-all active:scale-[0.98]">
             <span class="text-xl">♀</span>
             <span>女性</span>
           </button>
         </div>
       </div>
+
+      <!-- 2. 年齡區間 -->
+      <div>
+        <span class="block text-sm font-bold text-slate-700 mb-2">2. 年齡區間 <span class="text-slate-400 font-normal text-xs">（單選）</span></span>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="ageGroup">
+          <button type="button" data-value="30歲以下" onclick="selectSingle('age', this)" class="single-btn min-h-[54px] p-2.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+            30歲以下
+          </button>
+          <button type="button" data-value="30-50" onclick="selectSingle('age', this)" class="single-btn min-h-[54px] p-2.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+            30-50
+          </button>
+          <button type="button" data-value="50-70" onclick="selectSingle('age', this)" class="single-btn min-h-[54px] p-2.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+            50-70
+          </button>
+          <button type="button" data-value="70以上" onclick="selectSingle('age', this)" class="single-btn min-h-[54px] p-2.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+            70以上
+          </button>
+        </div>
+      </div>
     </section>
 
-    <!-- 區塊 3：呼吸道處置 -->
+    <!-- 區塊 3：過去病史 -->
     <section class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200">
       <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3.5">
         <h2 class="text-base font-black text-slate-800 flex items-center space-x-2">
-          <span class="px-2 py-0.5 rounded bg-blue-700 text-white text-xs font-mono">02</span>
-          <span>呼吸道處置 (Airway)</span>
+          <span class="px-2 py-0.5 rounded bg-amber-600 text-white text-xs font-mono">02</span>
+          <span>3. 過去病史 (Past History)</span>
         </h2>
-        <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">可複選 / 點擊切換</span>
+        <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">可複選</span>
       </div>
-      <div class="grid grid-cols-3 gap-2.5 sm:gap-3" data-category="airway">
-        <button type="button" data-value="鼻咽" onclick="toggleTreatment(this)" class="tx-btn min-h-[60px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base sm:text-lg flex flex-col items-center justify-center transition-all active:scale-[0.97]">
-          <span>鼻咽</span>
-          <span class="text-[11px] font-mono font-semibold opacity-70 mt-0.5">NPA</span>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" data-category="history">
+        <button type="button" data-value="心臟病" onclick="toggleMulti(this)" class="multi-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+          心臟病
         </button>
-        <button type="button" data-value="口咽" onclick="toggleTreatment(this)" class="tx-btn min-h-[60px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base sm:text-lg flex flex-col items-center justify-center transition-all active:scale-[0.97]">
-          <span>口咽</span>
-          <span class="text-[11px] font-mono font-semibold opacity-70 mt-0.5">OPA</span>
+        <button type="button" data-value="高血壓" onclick="toggleMulti(this)" class="multi-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+          高血壓
         </button>
-        <button type="button" data-value="SGA" onclick="toggleTreatment(this)" class="tx-btn min-h-[60px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base sm:text-lg flex flex-col items-center justify-center transition-all active:scale-[0.97]">
-          <span>SGA</span>
-          <span class="text-[11px] font-mono font-semibold opacity-70 mt-0.5">聲門上呼吸道</span>
+        <button type="button" data-value="糖尿病" onclick="toggleMulti(this)" class="multi-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+          糖尿病
+        </button>
+        <button type="button" data-value="腦中風" onclick="toggleMulti(this)" class="multi-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+          腦中風
+        </button>
+        <button type="button" data-value="有置放支架/節律器" onclick="toggleMulti(this)" class="multi-btn col-span-2 min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+          有置放支架/節律器
         </button>
       </div>
     </section>
 
-    <!-- 區塊 4：呼吸處置 -->
+    <!-- 區塊 4：現在症狀 -->
     <section class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200">
       <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3.5">
         <h2 class="text-base font-black text-slate-800 flex items-center space-x-2">
-          <span class="px-2 py-0.5 rounded bg-teal-700 text-white text-xs font-mono">03</span>
-          <span>呼吸處置 (Breathing)</span>
+          <span class="px-2 py-0.5 rounded bg-red-600 text-white text-xs font-mono">03</span>
+          <span>4. 現在症狀 (Symptoms)</span>
         </h2>
-        <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">可複選 / 點擊切換</span>
+        <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">可複選</span>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3" data-category="breathing">
-        <button type="button" data-value="一般面罩" onclick="toggleTreatment(this)" class="tx-btn min-h-[58px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base sm:text-lg flex flex-col items-center justify-center transition-all active:scale-[0.97]">
-          <span>一般面罩</span>
-          <span class="text-[11px] font-mono font-semibold opacity-70 mt-0.5">Simple Mask</span>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" data-category="symptoms">
+        <button type="button" data-value="胸悶/痛" onclick="toggleMulti(this)" class="multi-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+          胸悶/痛
         </button>
-        <button type="button" data-value="非再面罩" onclick="toggleTreatment(this)" class="tx-btn min-h-[58px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base sm:text-lg flex flex-col items-center justify-center transition-all active:scale-[0.97]">
-          <span>非再面罩</span>
-          <span class="text-[11px] font-mono font-semibold opacity-70 mt-0.5">NRM</span>
+        <button type="button" data-value="噁心" onclick="toggleMulti(this)" class="multi-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+          噁心
         </button>
-        <button type="button" data-value="霧化面罩" onclick="toggleTreatment(this)" class="tx-btn min-h-[58px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base sm:text-lg flex flex-col items-center justify-center transition-all active:scale-[0.97]">
-          <span>霧化面罩</span>
-          <span class="text-[11px] font-mono font-semibold opacity-70 mt-0.5">Nebulizer Mask</span>
+        <button type="button" data-value="冒冷汗" onclick="toggleMulti(this)" class="multi-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+          冒冷汗
+        </button>
+        <button type="button" data-value="意識改變" onclick="toggleMulti(this)" class="multi-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+          意識改變
+        </button>
+        <button type="button" data-value="ROSC" onclick="toggleMulti(this)" class="multi-btn col-span-2 sm:col-span-2 min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+          ROSC
         </button>
       </div>
     </section>
 
-    <!-- 區塊 5：循環處置 -->
-    <section class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3.5">
+    <!-- 區塊 5 & 6：後送資訊（5. 預計送往醫院、6. 預計到院時間） -->
+    <section class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 space-y-5">
+      <div class="border-b border-slate-100 pb-2">
         <h2 class="text-base font-black text-slate-800 flex items-center space-x-2">
-          <span class="px-2 py-0.5 rounded bg-red-600 text-white text-xs font-mono">04</span>
-          <span>循環處置 (Circulation)</span>
+          <span class="px-2 py-0.5 rounded bg-blue-700 text-white text-xs font-mono">04</span>
+          <span>後送醫院與到院時間</span>
         </h2>
-        <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">可複選 / 點擊切換</span>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3" data-category="circulation">
-        <button type="button" data-value="靜脈注射" onclick="toggleTreatment(this)" class="tx-btn min-h-[58px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base sm:text-lg flex flex-col items-center justify-center transition-all active:scale-[0.97]">
-          <span>靜脈注射</span>
-          <span class="text-[11px] font-mono font-semibold opacity-70 mt-0.5">IV Access</span>
-        </button>
-        <button type="button" data-value="抬高下肢" onclick="toggleTreatment(this)" class="tx-btn min-h-[58px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base sm:text-lg flex flex-col items-center justify-center transition-all active:scale-[0.97]">
-          <span>抬高下肢</span>
-          <span class="text-[11px] font-mono font-semibold opacity-70 mt-0.5">Passive Leg Raise</span>
-        </button>
-        <button type="button" data-value="口服液體" onclick="toggleTreatment(this)" class="tx-btn min-h-[58px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base sm:text-lg flex flex-col items-center justify-center transition-all active:scale-[0.97]">
-          <span>口服液體</span>
-          <span class="text-[11px] font-mono font-semibold opacity-70 mt-0.5">Oral Hydration</span>
-        </button>
-      </div>
-    </section>
 
-    <!-- 區塊 6：其他處置 -->
-    <section class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3">
-        <h2 class="text-base font-black text-slate-800 flex items-center space-x-2">
-          <span class="px-2 py-0.5 rounded bg-amber-600 text-white text-xs font-mono">05</span>
-          <span>其他處置 / 補充備註</span>
-        </h2>
-        <span class="text-xs text-slate-400">自由登打</span>
+      <!-- 5. 預計送往醫院 -->
+      <div>
+        <span class="block text-sm font-bold text-slate-700 mb-2">5. 預計送往醫院 <span class="text-slate-400 font-normal text-xs">（單選）</span></span>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="hospitalGroup">
+          <button type="button" data-value="若瑟" onclick="selectSingle('hospital', this)" class="single-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+            若瑟
+          </button>
+          <button type="button" data-value="虎尾台大" onclick="selectSingle('hospital', this)" class="single-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+            虎尾台大
+          </button>
+          <button type="button" data-value="斗六台大" onclick="selectSingle('hospital', this)" class="single-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+            斗六台大
+          </button>
+          <button type="button" data-value="斗六成大" onclick="selectSingle('hospital', this)" class="single-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+            斗六成大
+          </button>
+          <button type="button" data-value="雲林基督教醫院" onclick="selectSingle('hospital', this)" class="single-btn col-span-2 min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+            雲林基督教醫院
+          </button>
+        </div>
       </div>
-      <textarea id="otherTreatment" rows="3" placeholder="請輸入其他處置項目（例如：給氧流量 L/min、生命徵象、止血包紮、頸圈長背板、藥物處置等）..." oninput="updatePreview()" class="w-full rounded-xl border-2 border-slate-200 bg-slate-50 p-3.5 text-base font-medium text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:bg-white focus:outline-none transition leading-relaxed"></textarea>
+
+      <!-- 6. 預計到院時間 -->
+      <div>
+        <span class="block text-sm font-bold text-slate-700 mb-2">6. 預計到院時間 (ETA) <span class="text-slate-400 font-normal text-xs">（單選）</span></span>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5" id="etaGroup">
+          <button type="button" data-value="5分鐘以內" onclick="selectSingle('eta', this)" class="single-btn min-h-[54px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+            5分鐘以內
+          </button>
+          <button type="button" data-value="10-15分鐘" onclick="selectSingle('eta', this)" class="single-btn min-h-[54px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+            10-15分鐘
+          </button>
+          <button type="button" data-value="15分鐘以上" onclick="selectSingle('eta', this)" class="single-btn min-h-[54px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-extrabold text-base flex items-center justify-center transition-all active:scale-[0.97]">
+            15分鐘以上
+          </button>
+        </div>
+      </div>
     </section>
 
     <!-- ===================================================================== -->
-    <!-- 匯出圖片預覽與截圖目標區 (Export Card Area)                             -->
+    <!-- 匯出圖片預覽與截圖目標區 (極簡色塊直接排列版)                           -->
     <!-- ===================================================================== -->
     <section class="pt-3">
       <div class="flex items-center justify-between mb-2.5 px-1">
         <div class="flex items-center space-x-2">
-          <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 text-red-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
           <h3 class="text-sm font-black text-slate-700 uppercase tracking-wider">匯出圖片即時預覽卡</h3>
         </div>
-        <!-- 切換未選項顯示模式 -->
-        <label class="inline-flex items-center space-x-1.5 cursor-pointer select-none bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-xs">
-          <input type="checkbox" id="hideUnselectedToggle" checked onchange="updatePreview()" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
-          <span class="text-xs font-bold text-slate-600">僅顯示已選處置</span>
-        </label>
+        <span class="text-xs font-bold text-slate-500">已選項目自動排列</span>
       </div>
 
-      <!-- 實際被 html2canvas 擷取的卡片容器：精簡報表風格 -->
-      <div id="exportCard" class="bg-white border-2 border-slate-900 text-slate-900">
-        <!-- 報表標題列 -->
-        <div class="px-5 py-3.5 border-b-2 border-slate-900 flex items-baseline justify-between">
-          <div class="text-lg font-black tracking-wide text-slate-900">救護現場處置紀錄表</div>
-          <div class="text-xs font-mono font-bold text-slate-600" id="previewTimeBadge">--/-- --:--</div>
-        </div>
+      <!-- 實際被 html2canvas 擷取的卡片容器：依四個群組分排排列所有已選色塊 -->
+      <div id="exportCard" class="bg-white rounded-2xl border-2 border-slate-900 p-5 shadow-lg text-slate-900">
+        <!-- 四排色塊排列區 -->
+        <div id="previewTagCloud" class="divide-y divide-slate-200/80 min-h-[56px]"></div>
 
-        <!-- 報表表格區 -->
-        <div class="divide-y divide-slate-300 text-sm">
-          <!-- 基本資料 -->
-          <div class="grid grid-cols-2 divide-x divide-slate-300">
-            <div class="px-4 py-3">
-              <div class="text-xs font-bold text-slate-500 mb-0.5">患者姓名</div>
-              <div id="previewName" class="text-base font-black text-slate-900">未填寫</div>
-            </div>
-            <div class="px-4 py-3">
-              <div class="text-xs font-bold text-slate-500 mb-0.5">生理性別</div>
-              <div id="previewGender" class="text-base font-black text-slate-900">未選取</div>
-            </div>
-          </div>
-
-          <!-- 呼吸道處置 -->
-          <div id="previewRowAirway" class="px-4 py-3 flex items-baseline justify-between gap-4">
-            <div class="text-xs font-bold text-slate-600 shrink-0 w-24">呼吸道處置</div>
-            <div id="previewAirwayTags" class="flex-1 text-base font-bold text-slate-900 text-right"></div>
-          </div>
-
-          <!-- 呼吸處置 -->
-          <div id="previewRowBreathing" class="px-4 py-3 flex items-baseline justify-between gap-4">
-            <div class="text-xs font-bold text-slate-600 shrink-0 w-24">呼吸處置</div>
-            <div id="previewBreathingTags" class="flex-1 text-base font-bold text-slate-900 text-right"></div>
-          </div>
-
-          <!-- 循環處置 -->
-          <div id="previewRowCirculation" class="px-4 py-3 flex items-baseline justify-between gap-4">
-            <div class="text-xs font-bold text-slate-600 shrink-0 w-24">循環處置</div>
-            <div id="previewCirculationTags" class="flex-1 text-base font-bold text-slate-900 text-right"></div>
-          </div>
-
-          <!-- 其他處置 -->
-          <div id="previewRowOther" class="px-4 py-3">
-            <div class="text-xs font-bold text-slate-600 mb-1">其他處置 / 備註</div>
-            <div id="previewOther" class="text-base font-bold text-slate-900 whitespace-pre-wrap break-words leading-relaxed">無補充說明</div>
-          </div>
-        </div>
-
-        <!-- 報表頁尾 -->
-        <div class="px-4 py-2 bg-slate-50 border-t border-slate-300 flex items-center justify-between text-[11px] font-mono text-slate-500">
-          <span>EMS RECORD</span>
-          <span id="previewFullTimestamp">記錄時間：--</span>
+        <!-- 底部時間戳記 -->
+        <div class="mt-3 pt-3 border-t-2 border-slate-900 flex items-center justify-between text-xs font-mono text-slate-600">
+          <span class="font-black tracking-wider text-slate-900">PRE-HOSPITAL ECG</span>
+          <span id="previewFullTimestamp" class="font-bold">--</span>
         </div>
       </div>
     </section>
@@ -279,11 +253,11 @@
   <!-- 底部固定操作列：一鍵生成並分享圖片 -->
   <div class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3.5 z-30 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
     <div class="max-w-2xl mx-auto flex items-center gap-3">
-      <button type="button" id="exportBtn" onclick="exportAndShareImage()" class="flex-1 bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white font-black text-base sm:text-lg py-3.5 px-5 rounded-xl shadow-md shadow-blue-700/20 flex items-center justify-center space-x-2.5 transition-all active:scale-[0.99]">
+      <button type="button" id="exportBtn" onclick="exportAndShareImage()" class="flex-1 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-black text-base sm:text-lg py-3.5 px-5 rounded-xl shadow-md shadow-red-600/20 flex items-center justify-center space-x-2.5 transition-all active:scale-[0.99]">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
         </svg>
-        <span id="exportBtnText">生成並分享處置圖片</span>
+        <span id="exportBtnText">生成並分享心電圖資料</span>
       </button>
     </div>
   </div>
@@ -305,10 +279,10 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         </div>
-        <h3 class="text-lg font-black text-slate-900">確定要清空所有記錄嗎？</h3>
+        <h3 class="text-lg font-black text-slate-900">確定要清空所有選項嗎？</h3>
       </div>
       <p class="text-sm text-slate-600 mb-5 leading-relaxed">
-        此操作將會清除目前已輸入的姓名、性別、處置選項與備註內容，並將時間重設為現在。
+        此操作將會清除目前已點選的性別、年齡、病史、症狀與後送醫院資訊，並將時間重設為現在。
       </p>
       <div class="grid grid-cols-2 gap-3">
         <button type="button" onclick="closeResetModal()" class="py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition">
@@ -321,12 +295,12 @@
     </div>
   </div>
 
-  <!-- 圖片備援預覽彈窗 (當環境不支援系統直接分享檔案時顯示) -->
+  <!-- 圖片預覽彈窗 (不強制彈出系統存檔視窗) -->
   <div id="imageResultModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center bg-slate-900/80 backdrop-blur-xs p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
       <div class="px-5 py-3.5 bg-slate-900 text-white flex items-center justify-between">
         <span class="font-black text-base flex items-center space-x-2">
-          <span>📸 處置圖片已產生</span>
+          <span>📸 心電圖資料圖片已產生</span>
         </span>
         <button type="button" onclick="closeImageModal()" class="text-slate-300 hover:text-white p-1 rounded-lg">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -335,10 +309,10 @@
         </button>
       </div>
       <div class="p-4 overflow-y-auto bg-slate-100 flex-1 flex flex-col items-center">
-        <p id="fallbackNoticeText" class="text-xs font-bold bg-blue-50 text-blue-900 px-3.5 py-2.5 rounded-lg border border-blue-200 text-center mb-3 leading-relaxed">
+        <p class="text-xs font-bold bg-blue-50 text-blue-900 px-3.5 py-2.5 rounded-lg border border-blue-200 text-center mb-3 leading-relaxed">
           報表圖片已產生！請點擊下方「立即分享」傳送至 LINE，或直接長按圖片選擇分享／儲存影像。
         </p>
-        <img id="generatedImagePreview" src="" alt="救護現場處置紀錄圖片" class="w-full h-auto rounded-xl shadow-md border border-slate-300">
+        <img id="generatedImagePreview" src="" alt="到院前心電圖患者基本資料圖片" class="w-full h-auto rounded-xl shadow-md border border-slate-300">
       </div>
       <div class="p-3.5 bg-white border-t border-slate-200 flex gap-2">
         <button type="button" id="directShareBtn" class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition shadow-sm">
@@ -360,27 +334,39 @@
     // =========================================================================
     const state = {
       gender: '',
-      airway: [],
-      breathing: [],
-      circulation: []
+      age: '',
+      history: [],
+      symptoms: [],
+      hospital: '',
+      eta: ''
     };
 
     const ALL_OPTIONS = {
-      airway: ['鼻咽', '口咽', 'SGA'],
-      breathing: ['一般面罩', '非再面罩', '霧化面罩'],
-      circulation: ['靜脈注射', '抬高下肢', '口服液體']
+      history: ['心臟病', '高血壓', '糖尿病', '腦中風', '有置放支架/節律器'],
+      symptoms: ['胸悶/痛', '噁心', '冒冷汗', '意識改變', 'ROSC']
     };
 
-    const CATEGORY_STYLES = {
-      airway: {
-        activeBtn: ['bg-blue-700', 'border-blue-800', 'text-white', 'shadow-md', 'ring-2', 'ring-blue-300'],
+    const SINGLE_GROUP_IDS = {
+      gender: 'genderGroup',
+      age: 'ageGroup',
+      hospital: 'hospitalGroup',
+      eta: 'etaGroup'
+    };
+
+    const SINGLE_ACTIVE_STYLES = {
+      gender_男: ['bg-blue-700', 'border-blue-800', 'text-white', 'shadow-md', 'ring-2', 'ring-blue-300'],
+      gender_女: ['bg-rose-600', 'border-rose-700', 'text-white', 'shadow-md', 'ring-2', 'ring-rose-300'],
+      age: ['bg-slate-800', 'border-slate-900', 'text-white', 'shadow-md', 'ring-2', 'ring-slate-300'],
+      hospital: ['bg-indigo-700', 'border-indigo-800', 'text-white', 'shadow-md', 'ring-2', 'ring-indigo-300'],
+      eta: ['bg-emerald-700', 'border-emerald-800', 'text-white', 'shadow-md', 'ring-2', 'ring-emerald-300']
+    };
+
+    const MULTI_STYLES = {
+      history: {
+        activeBtn: ['bg-amber-600', 'border-amber-700', 'text-white', 'shadow-md', 'ring-2', 'ring-amber-300'],
         inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700']
       },
-      breathing: {
-        activeBtn: ['bg-teal-700', 'border-teal-800', 'text-white', 'shadow-md', 'ring-2', 'ring-teal-300'],
-        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700']
-      },
-      circulation: {
+      symptoms: {
         activeBtn: ['bg-red-600', 'border-red-700', 'text-white', 'shadow-md', 'ring-2', 'ring-red-300'],
         inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700']
       }
@@ -428,50 +414,53 @@
     }
 
     // =========================================================================
-    // 生理性別與處置按鈕互動邏輯
+    // 單選與複選按鈕互動邏輯
     // =========================================================================
-    function selectGender(btn) {
-      const val = btn.getAttribute('data-value');
-      const isAlreadySelected = state.gender === val;
-
-      // 清除所有性別按鈕選取樣式
-      document.querySelectorAll('.gender-btn').forEach(b => {
-        b.classList.remove(
+    function resetSingleGroupUI(field) {
+      const groupEl = document.getElementById(SINGLE_GROUP_IDS[field]);
+      if (!groupEl) return;
+      groupEl.querySelectorAll('.single-btn').forEach(btn => {
+        btn.classList.remove(
           'bg-blue-700', 'border-blue-800', 'ring-blue-300',
           'bg-rose-600', 'border-rose-700', 'ring-rose-300',
+          'bg-slate-800', 'border-slate-900', 'ring-slate-300',
+          'bg-indigo-700', 'border-indigo-800', 'ring-indigo-300',
+          'bg-emerald-700', 'border-emerald-800', 'ring-emerald-300',
           'text-white', 'shadow-md', 'ring-2'
         );
-        b.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-700');
+        btn.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-700');
       });
+    }
+
+    function selectSingle(field, btn) {
+      const val = btn.getAttribute('data-value');
+      const isAlreadySelected = state[field] === val;
+
+      resetSingleGroupUI(field);
 
       if (isAlreadySelected) {
-        state.gender = '';
+        state[field] = '';
       } else {
-        state.gender = val;
+        state[field] = val;
         btn.classList.remove('bg-slate-50', 'border-slate-200', 'text-slate-700');
-        if (val === '男') {
-          btn.classList.add('bg-blue-700', 'border-blue-800', 'text-white', 'shadow-md', 'ring-2', 'ring-blue-300');
-        } else {
-          btn.classList.add('bg-rose-600', 'border-rose-700', 'text-white', 'shadow-md', 'ring-2', 'ring-rose-300');
-        }
+        const styleKey = field === 'gender' ? `gender_${val}` : field;
+        btn.classList.add(...SINGLE_ACTIVE_STYLES[styleKey]);
       }
       updatePreview();
     }
 
-    function toggleTreatment(btn) {
+    function toggleMulti(btn) {
       const category = btn.parentElement.getAttribute('data-category');
       const val = btn.getAttribute('data-value');
-      const styleSet = CATEGORY_STYLES[category];
+      const styleSet = MULTI_STYLES[category];
       const list = state[category];
       const idx = list.indexOf(val);
 
       if (idx > -1) {
-        // 取消選取
         list.splice(idx, 1);
         btn.classList.remove(...styleSet.activeBtn);
         btn.classList.add(...styleSet.inactiveBtn);
       } else {
-        // 加入選取，並依照選項定義順序排列
         list.push(val);
         const order = ALL_OPTIONS[category];
         state[category].sort((a, b) => order.indexOf(a) - order.indexOf(b));
@@ -482,94 +471,100 @@
     }
 
     // =========================================================================
-    // 即時更新匯出圖片預覽卡 (精簡報表模式)
+    // 即時更新匯出報表預覽卡 (四排美化版 + html2canvas 完美置中校正)
     // =========================================================================
-    function renderCategoryTags(category, containerId, rowId, hideUnselected) {
-      const container = document.getElementById(containerId);
-      const row = document.getElementById(rowId);
-      const selectedList = state[category];
-      const options = ALL_OPTIONS[category];
-
-      if (hideUnselected && selectedList.length === 0) {
-        row.classList.add('hidden');
-        return;
-      } else {
-        row.classList.remove('hidden');
-      }
-
-      if (hideUnselected) {
-        container.textContent = selectedList.join('、');
-        container.className = 'flex-1 text-base font-black text-slate-900 text-right';
-      } else {
-        const formatted = options.map(opt => selectedList.includes(opt) ? `[✓] ${opt}` : `[ ] ${opt}`).join('　');
-        container.textContent = formatted;
-        container.className = 'flex-1 text-sm font-bold text-slate-800 text-right leading-relaxed';
-      }
+    function createBadge(text, colorClass) {
+      const span = document.createElement('span');
+      span.className = `export-badge inline-block px-3.5 py-2 rounded-xl text-[15px] font-black border shadow-xs tracking-wide ${colorClass}`;
+      span.style.lineHeight = '1.25';
+      const inner = document.createElement('span');
+      inner.className = 'badge-text inline-block';
+      inner.textContent = text;
+      span.appendChild(inner);
+      return span;
     }
 
     function updatePreview() {
       const timeObj = getFormattedDateTime();
-      document.getElementById('previewTimeBadge').textContent = timeObj.short;
-      document.getElementById('previewFullTimestamp').textContent = `記錄時間：${timeObj.display}`;
+      document.getElementById('previewFullTimestamp').textContent = timeObj.display;
 
-      // 姓名
-      const nameVal = document.getElementById('patientName').value.trim();
-      const previewNameEl = document.getElementById('previewName');
-      if (nameVal) {
-        previewNameEl.textContent = nameVal;
-        previewNameEl.className = 'text-base font-black text-slate-900';
-      } else {
-        previewNameEl.textContent = '未填寫';
-        previewNameEl.className = 'text-base font-bold text-slate-400';
+      const container = document.getElementById('previewTagCloud');
+      container.innerHTML = '';
+
+      // 輔助函式：建立單一排容器（左側極簡分類小標 + 右側色塊群組）
+      function appendRow(rowLabel, badges) {
+        if (badges.length === 0) return;
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'py-2.5 first:pt-0 last:pb-1 flex items-center gap-3';
+
+        // 左側極簡類別小標（提升閱讀速度又不占空間）
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'export-row-label inline-block shrink-0 w-11 text-center py-1 rounded-md bg-slate-100 text-slate-500 text-xs font-black tracking-wider';
+        labelSpan.style.lineHeight = '1.2';
+        const labelInner = document.createElement('span');
+        labelInner.className = 'label-text inline-block';
+        labelInner.textContent = rowLabel;
+        labelSpan.appendChild(labelInner);
+        rowDiv.appendChild(labelSpan);
+
+        // 右側色塊群組
+        const badgesWrap = document.createElement('div');
+        badgesWrap.className = 'flex-1 flex flex-wrap gap-2 items-center';
+        badges.forEach(b => badgesWrap.appendChild(b));
+        rowDiv.appendChild(badgesWrap);
+
+        container.appendChild(rowDiv);
       }
 
-      // 性別
-      const previewGenderEl = document.getElementById('previewGender');
+      // 第一排：性別、年齡
+      const row1 = [];
       if (state.gender === '男') {
-        previewGenderEl.textContent = '男性';
-        previewGenderEl.className = 'text-base font-black text-slate-900';
+        row1.push(createBadge('男性', 'bg-blue-700 text-white border-blue-800'));
       } else if (state.gender === '女') {
-        previewGenderEl.textContent = '女性';
-        previewGenderEl.className = 'text-base font-black text-slate-900';
-      } else {
-        previewGenderEl.textContent = '未選取';
-        previewGenderEl.className = 'text-base font-bold text-slate-400';
+        row1.push(createBadge('女性', 'bg-rose-600 text-white border-rose-700'));
       }
+      if (state.age) {
+        row1.push(createBadge(state.age, 'bg-slate-800 text-white border-slate-900'));
+      }
+      appendRow('基本', row1);
 
-      // 處置項目
-      const hideUnselected = document.getElementById('hideUnselectedToggle').checked;
-      renderCategoryTags('airway', 'previewAirwayTags', 'previewRowAirway', hideUnselected);
-      renderCategoryTags('breathing', 'previewBreathingTags', 'previewRowBreathing', hideUnselected);
-      renderCategoryTags('circulation', 'previewCirculationTags', 'previewRowCirculation', hideUnselected);
+      // 第二排：過去病史
+      const row2 = state.history.map(item =>
+        createBadge(item, 'bg-amber-600 text-white border-amber-700')
+      );
+      appendRow('病史', row2);
 
-      // 其他處置
-      const otherVal = document.getElementById('otherTreatment').value.trim();
-      const previewOtherEl = document.getElementById('previewOther');
-      const previewRowOther = document.getElementById('previewRowOther');
-      if (otherVal) {
-        previewRowOther.classList.remove('hidden');
-        previewOtherEl.textContent = otherVal;
-        previewOtherEl.className = 'text-base font-bold text-slate-900 whitespace-pre-wrap break-words leading-relaxed';
-      } else {
-        if (hideUnselected) {
-          previewRowOther.classList.add('hidden');
-        } else {
-          previewRowOther.classList.remove('hidden');
-          previewOtherEl.textContent = '無';
-          previewOtherEl.className = 'text-base font-bold text-slate-400 whitespace-pre-wrap break-words leading-relaxed';
-        }
+      // 第三排：現在症狀
+      const row3 = state.symptoms.map(item =>
+        createBadge(item, 'bg-red-600 text-white border-red-700')
+      );
+      appendRow('症狀', row3);
+
+      // 第四排：預計送往醫院、預計到院時間
+      const row4 = [];
+      if (state.hospital) {
+        row4.push(createBadge(state.hospital, 'bg-indigo-700 text-white border-indigo-800'));
+      }
+      if (state.eta) {
+        row4.push(createBadge(state.eta, 'bg-emerald-700 text-white border-emerald-800'));
+      }
+      appendRow('後送', row4);
+
+      // 若尚未點選任何項目時的提示文字
+      if (container.children.length === 0) {
+        const emptyHint = document.createElement('div');
+        emptyHint.className = 'text-sm font-bold text-slate-400 py-3 text-center';
+        emptyHint.textContent = '請點選上方項目，已選色塊將依四排整齊排列於此...';
+        container.appendChild(emptyHint);
       }
     }
 
     // =========================================================================
-    // 匯出並直接透過系統原生分享選單分享 PNG 圖片 (Web Share API + Fallback)
+    // 匯出並透過系統原生分享選單分享 PNG 圖片 (Web Share API + 零彈窗預覽)
     // =========================================================================
     let latestBlobUrl = null;
-    let latestFileName = '救護現場處置紀錄.png';
+    let latestFileName = '到院前心電圖資料.png';
 
-    /**
-     * 將 HTMLCanvasElement 非同步轉換為 PNG Blob
-     */
     function canvasToBlobAsync(canvas) {
       return new Promise((resolve, reject) => {
         canvas.toBlob((blob) => {
@@ -582,9 +577,6 @@
       });
     }
 
-    /**
-     * 觸發瀏覽器下載備援
-     */
     function triggerDownload(url, fileName) {
       const downloadLink = document.createElement('a');
       downloadLink.href = url;
@@ -600,16 +592,12 @@
       const exportBtnText = document.getElementById('exportBtnText');
 
       try {
-        // 按鈕進入載入狀態
         exportBtn.disabled = true;
         exportBtn.classList.add('opacity-75', 'cursor-wait');
-        exportBtnText.textContent = '正在產生處置圖片...';
+        exportBtnText.textContent = '正在產生報表圖片...';
 
-        // 確保字體載入完成，避免截圖跑版
         await document.fonts.ready;
 
-        // 使用 html2canvas 產生高解析度畫布 (scale: 3)
-        // 透過 onclone 修正 Tailwind CSS Preflight 造成的文字垂直基準線下移問題
         const canvas = await html2canvas(cardElement, {
           scale: 3,
           backgroundColor: '#ffffff',
@@ -617,9 +605,18 @@
           logging: false,
           onclone: (clonedDoc) => {
             const style = clonedDoc.createElement('style');
+            // 針對 html2canvas 截圖時中文字體基線偏下的特性，直接將內部文字向上位移 6px，確保完美垂直置中
             style.textContent = `
               #exportCard * {
                 box-sizing: border-box;
+              }
+              #exportCard .badge-text {
+                position: relative !important;
+                top: -6px !important;
+              }
+              #exportCard .label-text {
+                position: relative !important;
+                top: -4px !important;
               }
               #exportCard img, #exportCard svg {
                 display: inline-block !important;
@@ -630,27 +627,23 @@
           }
         });
 
-        // 組合檔名：救護處置_YYYYMMDD_HHMM_患者姓名.png
+        // 組合檔名：ECG通報_YYYYMMDD_HHMM_醫院.png
         const timeObj = getFormattedDateTime();
-        const rawName = document.getElementById('patientName').value.trim();
-        const safeName = rawName ? rawName.replace(/[\\/:*?"<>|]/g, '_') : '未命名患者';
-        latestFileName = `救護處置_${timeObj.fileTag}_${safeName}.png`;
+        const hospTag = state.hospital ? `_${state.hospital}` : '';
+        latestFileName = `ECG通報_${timeObj.fileTag}${hospTag}.png`;
 
-        // 轉換為 PNG Blob 與 File 物件
         const blob = await canvasToBlobAsync(canvas);
         const imageFile = new File([blob], latestFileName, { type: 'image/png' });
 
-        // 釋放舊的 ObjectURL 並建立新的
         if (latestBlobUrl) {
           URL.revokeObjectURL(latestBlobUrl);
         }
         latestBlobUrl = URL.createObjectURL(blob);
 
-        // 檢查瀏覽器是否支援 Web Share API 檔案分享
         const shareData = {
           files: [imageFile],
-          title: '救護現場處置紀錄',
-          text: `救護現場處置紀錄（${timeObj.display}）`
+          title: '到院前心電圖患者基本資料',
+          text: `到院前心電圖患者基本資料（${timeObj.display}）`
         };
 
         let sharedSuccessfully = false;
@@ -661,17 +654,14 @@
             sharedSuccessfully = true;
             showToast('已完成分享！', '📤');
           } catch (shareErr) {
-            // 若使用者主動取消分享面板 (AbortError)，直接結束不需觸發備援下載
             if (shareErr && shareErr.name === 'AbortError') {
               return;
             }
-            // 若為手機 Chrome 互動逾時 (NotAllowedError) 或其他分享限制，則靜默轉入下方備援下載流程
-            console.warn('原生分享受限，自動切換為下載與預覽模式:', shareErr);
+            console.warn('原生分享受限，切換為預覽模式:', shareErr);
           }
         }
 
         if (!sharedSuccessfully) {
-          // 備援機制：直接彈出圖片預覽視窗（不強制觸發系統下載詢問窗），支援點擊立即分享、長按傳送或手動下載
           document.getElementById('generatedImagePreview').src = latestBlobUrl;
           document.getElementById('directShareBtn').onclick = async () => {
             try {
@@ -701,10 +691,9 @@
         console.error('匯出圖片發生錯誤:', err);
         showToast('圖片產生失敗，請重新嘗試', '⚠️');
       } finally {
-        // 恢復按鈕狀態
         exportBtn.disabled = false;
         exportBtn.classList.remove('opacity-75', 'cursor-wait');
-        exportBtnText.textContent = '生成並分享處置圖片';
+        exportBtnText.textContent = '生成並分享心電圖資料';
       }
     }
 
@@ -730,39 +719,26 @@
     }
 
     function confirmReset() {
-      // 重置狀態
       state.gender = '';
-      state.airway = [];
-      state.breathing = [];
-      state.circulation = [];
+      state.age = '';
+      state.history = [];
+      state.symptoms = [];
+      state.hospital = '';
+      state.eta = '';
 
-      // 清空文字框
-      document.getElementById('patientName').value = '';
-      document.getElementById('otherTreatment').value = '';
+      Object.keys(SINGLE_GROUP_IDS).forEach(field => resetSingleGroupUI(field));
 
-      // 重置性別按鈕樣式
-      document.querySelectorAll('.gender-btn').forEach(b => {
-        b.classList.remove(
-          'bg-blue-700', 'border-blue-800', 'ring-blue-300',
-          'bg-rose-600', 'border-rose-700', 'ring-rose-300',
-          'text-white', 'shadow-md', 'ring-2'
-        );
-        b.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-700');
-      });
-
-      // 重置所有處置按鈕樣式
-      document.querySelectorAll('.tx-btn').forEach(btn => {
+      document.querySelectorAll('.multi-btn').forEach(btn => {
         const category = btn.parentElement.getAttribute('data-category');
-        const styleSet = CATEGORY_STYLES[category];
+        const styleSet = MULTI_STYLES[category];
         btn.classList.remove(...styleSet.activeBtn);
         btn.classList.add(...styleSet.inactiveBtn);
       });
 
-      // 更新為最新時間並刷新預覽
       setNowTime(false);
       updatePreview();
       closeResetModal();
-      showToast('已清空所有欄位並更新時間', '🧹');
+      showToast('已清空所有選項並更新時間', '🧹');
     }
 
     let toastTimer = null;
@@ -785,7 +761,6 @@
       }, 2600);
     }
 
-    // 網頁載入後初始化時間與預覽
     window.addEventListener('DOMContentLoaded', () => {
       setNowTime(false);
     });
