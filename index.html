@@ -336,7 +336,7 @@
       </div>
       <div class="p-4 overflow-y-auto bg-slate-100 flex-1 flex flex-col items-center">
         <p id="fallbackNoticeText" class="text-xs font-bold bg-blue-50 text-blue-900 px-3.5 py-2.5 rounded-lg border border-blue-200 text-center mb-3 leading-relaxed">
-          已為您產生並自動下載圖檔！請點擊下方「立即分享圖片」喚起系統分享選單，或直接長按圖片傳送。
+          報表圖片已產生！請點擊下方「立即分享」傳送至 LINE，或直接長按圖片選擇分享／儲存影像。
         </p>
         <img id="generatedImagePreview" src="" alt="救護現場處置紀錄圖片" class="w-full h-auto rounded-xl shadow-md border border-slate-300">
       </div>
@@ -345,7 +345,7 @@
           📤 立即分享
         </button>
         <button type="button" id="manualDownloadBtn" class="flex-1 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm transition">
-          📥 重新下載
+          📥 下載圖檔
         </button>
         <button type="button" onclick="closeImageModal()" class="px-4 py-3 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-sm transition">
           關閉
@@ -671,9 +671,7 @@
         }
 
         if (!sharedSuccessfully) {
-          // 備援機制：自動下載並彈出圖片預覽（支援點擊立即分享或手機長按轉傳）
-          triggerDownload(latestBlobUrl, latestFileName);
-
+          // 備援機制：直接彈出圖片預覽視窗（不強制觸發系統下載詢問窗），支援點擊立即分享、長按傳送或手動下載
           document.getElementById('generatedImagePreview').src = latestBlobUrl;
           document.getElementById('directShareBtn').onclick = async () => {
             try {
@@ -681,7 +679,7 @@
                 await navigator.share(shareData);
                 showToast('已完成分享！', '📤');
               } else {
-                showToast('此瀏覽器不支援直接分享，請長按圖片傳送', 'ℹ️');
+                showToast('請直接長按上方圖片進行分享', 'ℹ️');
               }
             } catch (e) {
               if (e && e.name !== 'AbortError') {
@@ -691,13 +689,13 @@
           };
           document.getElementById('manualDownloadBtn').onclick = () => {
             triggerDownload(latestBlobUrl, latestFileName);
-            showToast('已重新下載圖檔', '📥');
+            showToast('已觸發下載圖檔', '📥');
           };
 
           const resultModal = document.getElementById('imageResultModal');
           resultModal.classList.remove('hidden');
           resultModal.classList.add('flex');
-          showToast('已產生圖片並自動下載', '📸');
+          showToast('報表圖片已產生', '📸');
         }
       } catch (err) {
         console.error('匯出圖片發生錯誤:', err);
