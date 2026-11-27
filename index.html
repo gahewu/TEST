@@ -335,17 +335,20 @@
         </button>
       </div>
       <div class="p-4 overflow-y-auto bg-slate-100 flex-1 flex flex-col items-center">
-        <p id="fallbackNoticeText" class="text-xs font-bold bg-amber-100 text-amber-900 px-3.5 py-2 rounded-lg border border-amber-200 text-center mb-3 leading-relaxed">
-          目前瀏覽器不支援直接呼叫分享選單，已為您自動下載檔案。您也可以直接長按下方圖片轉傳，或改用手機 Safari / Chrome 開啟網頁以使用一鍵分享。
+        <p id="fallbackNoticeText" class="text-xs font-bold bg-blue-50 text-blue-900 px-3.5 py-2.5 rounded-lg border border-blue-200 text-center mb-3 leading-relaxed">
+          已為您產生並自動下載圖檔！請點擊下方「立即分享圖片」喚起系統分享選單，或直接長按圖片傳送。
         </p>
         <img id="generatedImagePreview" src="" alt="救護現場處置紀錄圖片" class="w-full h-auto rounded-xl shadow-md border border-slate-300">
       </div>
-      <div class="p-3.5 bg-white border-t border-slate-200 flex gap-2.5">
-        <button type="button" id="manualDownloadBtn" class="flex-1 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm transition">
-          重新下載圖檔
+      <div class="p-3.5 bg-white border-t border-slate-200 flex gap-2">
+        <button type="button" id="directShareBtn" class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition shadow-sm">
+          📤 立即分享
         </button>
-        <button type="button" onclick="closeImageModal()" class="flex-1 py-3 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-sm transition">
-          關閉視窗
+        <button type="button" id="manualDownloadBtn" class="flex-1 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm transition">
+          📥 重新下載
+        </button>
+        <button type="button" onclick="closeImageModal()" class="px-4 py-3 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-sm transition">
+          關閉
         </button>
       </div>
     </div>
@@ -650,15 +653,42 @@
           text: `救護現場處置紀錄（${timeObj.display}）`
         };
 
+        let sharedSuccessfully = false;
         if (navigator.canShare && navigator.canShare({ files: [imageFile] })) {
-          exportBtnText.textContent = '開啟系統分享選單...';
-          await navigator.share(shareData);
-          showToast('已完成分享！', '📤');
-        } else {
-          // 備援機制：不支援檔案直接分享的環境（如桌面瀏覽器或受限的 App 內建網頁）
+          try {
+            exportBtnText.textContent = '開啟系統分享選單...';
+            await navigator.share(shareData);
+            sharedSuccessfully = true;
+            showToast('已完成分享！', '📤');
+          } catch (shareErr) {
+            // 若使用者主動取消分享面板 (AbortError)，直接結束不需觸發備援下載
+            if (shareErr && shareErr.name === 'AbortError') {
+              return;
+            }
+            // 若為手機 Chrome 互動逾時 (NotAllowedError) 或其他分享限制，則靜默轉入下方備援下載流程
+            console.warn('原生分享受限，自動切換為下載與預覽模式:', shareErr);
+          }
+        }
+
+        if (!sharedSuccessfully) {
+          // 備援機制：自動下載並彈出圖片預覽（支援點擊立即分享或手機長按轉傳）
           triggerDownload(latestBlobUrl, latestFileName);
 
           document.getElementById('generatedImagePreview').src = latestBlobUrl;
+          document.getElementById('directShareBtn').onclick = async () => {
+            try {
+              if (navigator.share) {
+                await navigator.share(shareData);
+                showToast('已完成分享！', '📤');
+              } else {
+                showToast('此瀏覽器不支援直接分享，請長按圖片傳送', 'ℹ️');
+              }
+            } catch (e) {
+              if (e && e.name !== 'AbortError') {
+                showToast('請直接長按上方圖片進行分享', 'ℹ️');
+              }
+            }
+          };
           document.getElementById('manualDownloadBtn').onclick = () => {
             triggerDownload(latestBlobUrl, latestFileName);
             showToast('已重新下載圖檔', '📥');
@@ -670,12 +700,8 @@
           showToast('已產生圖片並自動下載', '📸');
         }
       } catch (err) {
-        // 若使用者主動取消系統分享面板 (AbortError)，安靜處理不跳錯誤提示
-        if (err && err.name === 'AbortError') {
-          return;
-        }
-        console.error('分享或匯出圖片發生錯誤:', err);
-        showToast('無法開啟分享，請改用 Safari / Chrome 開啟', '⚠️');
+        console.error('匯出圖片發生錯誤:', err);
+        showToast('圖片產生失敗，請重新嘗試', '⚠️');
       } finally {
         // 恢復按鈕狀態
         exportBtn.disabled = false;
