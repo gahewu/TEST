@@ -214,7 +214,7 @@
         </div>
         <!-- 切換未選項顯示模式 -->
         <label class="inline-flex items-center space-x-1.5 cursor-pointer select-none bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-xs">
-          <input type="checkbox" id="hideUnselectedToggle" onchange="updatePreview()" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
+          <input type="checkbox" id="hideUnselectedToggle" checked onchange="updatePreview()" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
           <span class="text-xs font-bold text-slate-600">僅顯示已選處置</span>
         </label>
       </div>
@@ -300,42 +300,42 @@
 
   </main>
 
-  <!-- 底部固定操作列：一鍵匯出圖片 -->
+  <!-- 底部固定操作列：一鍵生成並分享圖片 -->
   <div class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3.5 z-30 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
     <div class="max-w-2xl mx-auto flex items-center gap-3">
-      <button type="button" id="exportBtn" onclick="exportToImage()" class="flex-1 bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white font-black text-base sm:text-lg py-3.5 px-5 rounded-xl shadow-md shadow-blue-700/20 flex items-center justify-center space-x-2.5 transition-all active:scale-[0.99]">
+      <button type="button" id="exportBtn" onclick="exportAndShareImage()" class="flex-1 bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white font-black text-base sm:text-lg py-3.5 px-5 rounded-xl shadow-md shadow-blue-700/20 flex items-center justify-center space-x-2.5 transition-all active:scale-[0.99]">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
         </svg>
-        <span id="exportBtnText">匯出處置記錄圖片 (PNG)</span>
+        <span id="exportBtnText">生成並分享處置圖片</span>
       </button>
     </div>
   </div>
-
-  <!-- 自訂提示訊息框 (Toast) - 取代 alert() -->
-  <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-2">
-    <div id="toastInner" class="bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl font-bold text-sm flex items-center space-x-2 border border-slate-700">
-      <span id="toastIcon">✅</span>
-      <span id="toastMsg">操作成功</span>
-    </div>
-  </div>
-
-  <!-- 自訂清空確認視窗 (Modal) - 取代 confirm() -->
-  <div id="resetModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 transform transition-all">
-      <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-4 mx-auto">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
-      </div>
-      <h3 class="text-lg font-black text-center text-slate-900 mb-1.5">確定要清空所有記錄嗎？</h3>
-      <p class="text-sm text-slate-500 text-center mb-6">清空後目前的患者姓名、點選處置與備註將會全部重置，並更新為現在時間。</p>
-      <div class="grid grid-cols-2 gap-3">
-        <button type="button" onclick="closeResetModal()" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition">
-          取消
+  <!-- 圖片備援預覽彈窗 (當環境不支援系統直接分享檔案時顯示) -->
+  <div id="imageResultModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center bg-slate-900/80 backdrop-blur-xs p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="px-5 py-3.5 bg-slate-900 text-white flex items-center justify-between">
+        <span class="font-black text-base flex items-center space-x-2">
+          <span>📸 處置圖片已產生</span>
+        </span>
+        <button type="button" onclick="closeImageModal()" class="text-slate-300 hover:text-white p-1 rounded-lg">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
-        <button type="button" onclick="confirmReset()" class="py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition">
-          確定清空
+      </div>
+      <div class="p-4 overflow-y-auto bg-slate-100 flex-1 flex flex-col items-center">
+        <p id="fallbackNoticeText" class="text-xs font-bold bg-amber-100 text-amber-900 px-3.5 py-2 rounded-lg border border-amber-200 text-center mb-3 leading-relaxed">
+          目前瀏覽器不支援直接呼叫分享選單，已為您自動下載檔案。您也可以直接長按下方圖片轉傳，或改用手機 Safari / Chrome 開啟網頁以使用一鍵分享。
+        </p>
+        <img id="generatedImagePreview" src="" alt="救護現場處置紀錄圖片" class="w-full h-auto rounded-xl shadow-md border border-slate-300">
+      </div>
+      <div class="p-3.5 bg-white border-t border-slate-200 flex gap-2.5">
+        <button type="button" id="manualDownloadBtn" class="flex-1 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm transition">
+          重新下載圖檔
+        </button>
+        <button type="button" onclick="closeImageModal()" class="flex-1 py-3 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-sm transition">
+          關閉視窗
         </button>
       </div>
     </div>
@@ -370,261 +370,39 @@
 
   <script>
     // =========================================================================
-    // 應用程式狀態管理 (Application State)
+    // 匯出並直接透過系統原生分享選單分享 PNG 圖片 (Web Share API + Fallback)
     // =========================================================================
-    const state = {
-      gender: '', // '男' | '女' | ''
-      airway: [], // ['鼻咽', '口咽', 'SGA']
-      breathing: [], // ['一般面罩', '非再面罩', '霧化面罩']
-      circulation: [] // ['靜脈注射', '抬高下肢', '口服液體']
-    };
-
-    // 各分類所有預設選項（用於預覽對照）
-    const ALL_OPTIONS = {
-      airway: ['鼻咽', '口咽', 'SGA'],
-      breathing: ['一般面罩', '非再面罩', '霧化面罩'],
-      circulation: ['靜脈注射', '抬高下肢', '口服液體']
-    };
-
-    // 各分類高亮樣式設定
-    const CATEGORY_STYLES = {
-      airway: {
-        activeBtn: ['bg-blue-700', 'border-blue-800', 'text-white', 'shadow-md', 'ring-2', 'ring-blue-300'],
-        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700'],
-        activeTag: 'bg-blue-700 text-white border-blue-800 font-black',
-      },
-      breathing: {
-        activeBtn: ['bg-teal-700', 'border-teal-800', 'text-white', 'shadow-md', 'ring-2', 'ring-teal-300'],
-        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700'],
-        activeTag: 'bg-teal-700 text-white border-teal-800 font-black',
-      },
-      circulation: {
-        activeBtn: ['bg-red-600', 'border-red-700', 'text-white', 'shadow-md', 'ring-2', 'ring-red-300'],
-        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700'],
-        activeTag: 'bg-red-600 text-white border-red-700 font-black',
-      }
-    };
-
-    // =========================================================================
-    // 初始化與時間處理
-    // =========================================================================
-    window.addEventListener('DOMContentLoaded', () => {
-      setNowTime(false);
-      updatePreview();
-    });
+    let latestBlobUrl = null;
+    let latestFileName = '救護現場處置紀錄.png';
 
     /**
-     * 設定記錄時間為目前本地時間
-     * @param {boolean} showNotification 是否顯示提示訊息
+     * 將 HTMLCanvasElement 非同步轉換為 PNG Blob
      */
-    function setNowTime(showNotification = false) {
-      const now = new Date();
-      // 轉換為 YYYY-MM-DDTHH:mm 格式以符合 datetime-local
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      
-      const formatted = `${year}-${month}-${day}T${hours}:${minutes}`;
-      document.getElementById('recordTime').value = formatted;
-      updatePreview();
-
-      if (showNotification) {
-        showToast('已更新為目前時間', '🕒');
-      }
-    }
-
-    /**
-     * 格式化時間字串供預覽與檔名使用
-     */
-    function getFormattedDateTime() {
-      const raw = document.getElementById('recordTime').value;
-      if (!raw) {
-        return { display: '未設定時間', fileTag: '無時間' };
-      }
-      const [datePart, timePart] = raw.split('T');
-      const cleanDate = datePart.replace(/-/g, '/');
-      const fileDate = datePart.replace(/-/g, '');
-      const fileTime = timePart.replace(/:/g, '');
-      return {
-        display: `${cleanDate} ${timePart}`,
-        fileTag: `${fileDate}_${fileTime}`
-      };
-    }
-
-    // =========================================================================
-    // 互動選取邏輯 (生理性別 & 各類處置)
-    // =========================================================================
-
-    /**
-     * 單選生理性別（再次點擊可取消選取）
-     */
-    function selectGender(btn) {
-      const value = btn.getAttribute('data-value');
-      const allGenderBtns = document.querySelectorAll('.gender-btn');
-
-      if (state.gender === value) {
-        // 取消選取
-        state.gender = '';
-      } else {
-        state.gender = value;
-      }
-
-      // 更新按鈕外觀
-      allGenderBtns.forEach(b => {
-        const bVal = b.getAttribute('data-value');
-        if (bVal === state.gender) {
-          b.classList.remove('bg-slate-50', 'border-slate-200', 'text-slate-700');
-          if (bVal === '男') {
-            b.classList.add('bg-blue-700', 'border-blue-800', 'text-white', 'shadow-md', 'ring-2', 'ring-blue-300');
+    function canvasToBlobAsync(canvas) {
+      return new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
           } else {
-            b.classList.add('bg-rose-600', 'border-rose-700', 'text-white', 'shadow-md', 'ring-2', 'ring-rose-300');
+            reject(new Error('Canvas 轉換 Blob 失敗'));
           }
-        } else {
-          b.classList.remove(
-            'bg-blue-700', 'border-blue-800', 'ring-blue-300',
-            'bg-rose-600', 'border-rose-700', 'ring-rose-300',
-            'text-white', 'shadow-md', 'ring-2'
-          );
-          b.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-700');
-        }
+        }, 'image/png', 1.0);
       });
-
-      updatePreview();
     }
 
     /**
-     * 切換處置項目（多選 / 可取消）
+     * 觸發瀏覽器下載備援
      */
-    function toggleTreatment(btn) {
-      const category = btn.parentElement.getAttribute('data-category');
-      const value = btn.getAttribute('data-value');
-      const styleSet = CATEGORY_STYLES[category];
-
-      const idx = state[category].indexOf(value);
-      if (idx > -1) {
-        // 已存在 -> 移除
-        state[category].splice(idx, 1);
-        btn.classList.remove(...styleSet.activeBtn);
-        btn.classList.add(...styleSet.inactiveBtn);
-      } else {
-        // 未存在 -> 加入
-        state[category].push(value);
-        btn.classList.remove(...styleSet.inactiveBtn);
-        btn.classList.add(...styleSet.activeBtn);
-      }
-
-      updatePreview();
+    function triggerDownload(url, fileName) {
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = fileName;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
     }
 
-    // =========================================================================
-    // 即時更新「匯出圖片預覽卡」
-    // =========================================================================
-    function updatePreview() {
-      // 1. 更新時間
-      const timeObj = getFormattedDateTime();
-      document.getElementById('previewTimeBadge').textContent = timeObj.display;
-      document.getElementById('previewFullTimestamp').textContent = `記錄時間：${timeObj.display}`;
-
-      // 2. 更新患者姓名
-      const nameInput = document.getElementById('patientName').value.trim();
-      const previewNameEl = document.getElementById('previewName');
-      if (nameInput) {
-        previewNameEl.textContent = nameInput;
-        previewNameEl.classList.remove('text-slate-400');
-        previewNameEl.classList.add('text-slate-900');
-      } else {
-        previewNameEl.textContent = '未填寫';
-        previewNameEl.classList.remove('text-slate-900');
-        previewNameEl.classList.add('text-slate-400');
-      }
-
-      // 3. 更新生理性別
-      const previewGenderEl = document.getElementById('previewGender');
-      if (state.gender) {
-        previewGenderEl.textContent = state.gender === '男' ? '♂ 男性' : '♀ 女性';
-        previewGenderEl.className = `text-xl font-black ${state.gender === '男' ? 'text-blue-700' : 'text-rose-600'}`;
-      } else {
-        previewGenderEl.textContent = '未選取';
-        previewGenderEl.className = 'text-xl font-black text-slate-400';
-      }
-
-      // 4. 更新三大處置標籤
-      const hideUnselected = document.getElementById('hideUnselectedToggle').checked;
-      renderCategoryTags('airway', 'previewAirwayTags', 'previewRowAirway', hideUnselected);
-      renderCategoryTags('breathing', 'previewBreathingTags', 'previewRowBreathing', hideUnselected);
-      renderCategoryTags('circulation', 'previewCirculationTags', 'previewRowCirculation', hideUnselected);
-
-      // 5. 更新其他處置
-      const otherInput = document.getElementById('otherTreatment').value.trim();
-      const previewOtherEl = document.getElementById('previewOther');
-      const previewRowOther = document.getElementById('previewRowOther');
-      if (otherInput) {
-        previewOtherEl.textContent = otherInput;
-        previewOtherEl.classList.remove('text-slate-400', 'font-normal');
-        previewOtherEl.classList.add('text-slate-900', 'font-bold');
-        previewRowOther.classList.remove('hidden');
-      } else {
-        previewOtherEl.textContent = '無補充說明';
-        previewOtherEl.classList.remove('text-slate-900', 'font-bold');
-        previewOtherEl.classList.add('text-slate-400', 'font-normal');
-        if (hideUnselected) {
-          previewRowOther.classList.add('hidden');
-        } else {
-          previewRowOther.classList.remove('hidden');
-        }
-      }
-    }
-
-    /**
-     * 渲染各分類在預覽卡片中的標籤狀態
-     */
-    function renderCategoryTags(category, containerId, rowId, hideUnselected) {
-      const container = document.getElementById(containerId);
-      const rowEl = document.getElementById(rowId);
-      const selectedItems = state[category];
-      const allItems = ALL_OPTIONS[category];
-      const activeClass = CATEGORY_STYLES[category].activeTag;
-
-      container.innerHTML = '';
-
-      if (hideUnselected) {
-        if (selectedItems.length === 0) {
-          // 若勾選僅顯示已選，且此項無任何處置，顯示「無處置」或隱藏
-          const emptySpan = document.createElement('span');
-          emptySpan.className = 'text-sm text-slate-400 font-medium';
-          emptySpan.textContent = '無執行此類處置';
-          container.appendChild(emptySpan);
-        } else {
-          selectedItems.forEach(item => {
-            const badge = document.createElement('span');
-            badge.className = `px-3.5 py-1.5 rounded-lg border text-sm flex items-center space-x-1.5 shadow-2xs ${activeClass}`;
-            badge.innerHTML = `<span>✔</span><span>${item}</span>`;
-            container.appendChild(badge);
-          });
-        }
-      } else {
-        // 顯示全部選項：已選高亮打勾，未選淡色顯示
-        allItems.forEach(item => {
-          const isSelected = selectedItems.includes(item);
-          const badge = document.createElement('span');
-          if (isSelected) {
-            badge.className = `px-3.5 py-1.5 rounded-lg border text-sm flex items-center space-x-1.5 shadow-2xs ${activeClass}`;
-            badge.innerHTML = `<span>✔</span><span>${item}</span>`;
-          } else {
-            badge.className = 'px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 text-sm font-medium flex items-center space-x-1';
-            badge.innerHTML = `<span class="opacity-50">○</span><span>${item}</span>`;
-          }
-          container.appendChild(badge);
-        });
-      }
-    }
-
-    // =========================================================================
-    // 匯出成 PNG 圖片功能 (使用 html2canvas)
-    // =========================================================================
-    async function exportToImage() {
+    async function exportAndShareImage() {
       const cardElement = document.getElementById('exportCard');
       const exportBtn = document.getElementById('exportBtn');
       const exportBtnText = document.getElementById('exportBtnText');
@@ -633,12 +411,12 @@
         // 按鈕進入載入狀態
         exportBtn.disabled = true;
         exportBtn.classList.add('opacity-75', 'cursor-wait');
-        exportBtnText.textContent = '正在產生高畫質圖片...';
+        exportBtnText.textContent = '正在產生處置圖片...';
 
-        // 確保字體與排版穩定
+        // 確保字體載入完成，避免截圖跑版
         await document.fonts.ready;
 
-        // 使用 html2canvas 截圖 (scale: 3 確保手機高 DPI 螢幕下文字依然銳利清晰)
+        // 使用 html2canvas 產生高解析度畫布 (scale: 3)
         const canvas = await html2canvas(cardElement, {
           scale: 3,
           backgroundColor: '#ffffff',
@@ -646,37 +424,60 @@
           logging: false
         });
 
-        const imgDataUrl = canvas.toDataURL('image/png', 1.0);
-
         // 組合檔名：救護處置_YYYYMMDD_HHMM_患者姓名.png
         const timeObj = getFormattedDateTime();
         const rawName = document.getElementById('patientName').value.trim();
         const safeName = rawName ? rawName.replace(/[\\/:*?"<>|]/g, '_') : '未命名患者';
-        const fileName = `救護處置_${timeObj.fileTag}_${safeName}.png`;
+        latestFileName = `救護處置_${timeObj.fileTag}_${safeName}.png`;
 
-        // 觸發瀏覽器自動下載
-        const downloadLink = document.createElement('a');
-        downloadLink.href = imgDataUrl;
-        downloadLink.download = fileName;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
+        // 轉換為 PNG Blob 與 File 物件
+        const blob = await canvasToBlobAsync(canvas);
+        const imageFile = new File([blob], latestFileName, { type: 'image/png' });
 
-        // 同時開啟結果預覽視窗（方便 iOS Safari 或 LINE 內建瀏覽器直接長按儲存圖片）
-        document.getElementById('generatedImagePreview').src = imgDataUrl;
-        const resultModal = document.getElementById('imageResultModal');
-        resultModal.classList.remove('hidden');
-        resultModal.classList.add('flex');
+        // 釋放舊的 ObjectURL 並建立新的
+        if (latestBlobUrl) {
+          URL.revokeObjectURL(latestBlobUrl);
+        }
+        latestBlobUrl = URL.createObjectURL(blob);
 
-        showToast('圖片已匯出並開始下載！', '✅');
+        // 檢查瀏覽器是否支援 Web Share API 檔案分享
+        const shareData = {
+          files: [imageFile],
+          title: '救護現場處置紀錄',
+          text: `救護現場處置紀錄（${timeObj.display}）`
+        };
+
+        if (navigator.canShare && navigator.canShare({ files: [imageFile] })) {
+          exportBtnText.textContent = '開啟系統分享選單...';
+          await navigator.share(shareData);
+          showToast('已完成分享！', '📤');
+        } else {
+          // 備援機制：不支援檔案直接分享的環境（如桌面瀏覽器或受限的 App 內建網頁）
+          triggerDownload(latestBlobUrl, latestFileName);
+
+          document.getElementById('generatedImagePreview').src = latestBlobUrl;
+          document.getElementById('manualDownloadBtn').onclick = () => {
+            triggerDownload(latestBlobUrl, latestFileName);
+            showToast('已重新下載圖檔', '📥');
+          };
+
+          const resultModal = document.getElementById('imageResultModal');
+          resultModal.classList.remove('hidden');
+          resultModal.classList.add('flex');
+          showToast('已產生圖片並自動下載', '📸');
+        }
       } catch (err) {
-        console.error('匯出圖片發生錯誤:', err);
-        showToast('匯出失敗，請重試或直接螢幕截圖', '⚠️');
+        // 若使用者主動取消系統分享面板 (AbortError)，安靜處理不跳錯誤提示
+        if (err && err.name === 'AbortError') {
+          return;
+        }
+        console.error('分享或匯出圖片發生錯誤:', err);
+        showToast('無法開啟分享，請改用 Safari / Chrome 開啟', '⚠️');
       } finally {
         // 恢復按鈕狀態
         exportBtn.disabled = false;
         exportBtn.classList.remove('opacity-75', 'cursor-wait');
-        exportBtnText.textContent = '匯出處置記錄圖片 (PNG)';
+        exportBtnText.textContent = '生成並分享處置圖片';
       }
     }
 
