@@ -311,6 +311,40 @@
       </button>
     </div>
   </div>
+
+  <!-- 頂部浮動提示框 (Toast) -->
+  <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 -translate-y-2 transition-all duration-300">
+    <div class="bg-slate-900/95 text-white px-4 py-2.5 rounded-full shadow-xl border border-slate-700 flex items-center space-x-2 text-sm font-bold whitespace-nowrap">
+      <span id="toastIcon">✅</span>
+      <span id="toastMsg">操作完成</span>
+    </div>
+  </div>
+
+  <!-- 清空重填確認視窗 (Reset Modal) -->
+  <div id="resetModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/75 backdrop-blur-xs p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200">
+      <div class="flex items-center space-x-3 mb-3">
+        <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-black text-slate-900">確定要清空所有記錄嗎？</h3>
+      </div>
+      <p class="text-sm text-slate-600 mb-5 leading-relaxed">
+        此操作將會清除目前已輸入的姓名、性別、處置選項與備註內容，並將時間重設為現在。
+      </p>
+      <div class="grid grid-cols-2 gap-3">
+        <button type="button" onclick="closeResetModal()" class="py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition">
+          取消
+        </button>
+        <button type="button" onclick="confirmReset()" class="py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition">
+          確定清空
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- 圖片備援預覽彈窗 (當環境不支援系統直接分享檔案時顯示) -->
   <div id="imageResultModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center bg-slate-900/80 backdrop-blur-xs p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
@@ -341,34 +375,218 @@
     </div>
   </div>
 
-  <!-- 圖片匯出結果預覽彈窗 (方便手機長按儲存或確認) -->
-  <div id="imageResultModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center bg-slate-900/80 backdrop-blur-xs p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
-      <div class="px-5 py-3.5 bg-slate-900 text-white flex items-center justify-between">
-        <span class="font-black text-base flex items-center space-x-2">
-          <span>📸 處置圖片已產生</span>
-        </span>
-        <button type="button" onclick="closeImageModal()" class="text-slate-300 hover:text-white p-1 rounded-lg">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-      <div class="p-4 overflow-y-auto bg-slate-100 flex-1 flex flex-col items-center">
-        <p class="text-xs font-bold text-slate-600 mb-3 bg-amber-100 text-amber-900 px-3 py-1.5 rounded-lg border border-amber-200 text-center">
-          檔案已自動下載！若手機未自動下載，可直接長按下方圖片儲存。
-        </p>
-        <img id="generatedImagePreview" src="" alt="救護現場處置紀錄圖片" class="w-full h-auto rounded-xl shadow-md border border-slate-300">
-      </div>
-      <div class="p-3.5 bg-white border-t border-slate-200 flex justify-end">
-        <button type="button" onclick="closeImageModal()" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm transition">
-          完成並關閉
-        </button>
-      </div>
-    </div>
-  </div>
-
   <script>
+    // =========================================================================
+    // 應用程式狀態與類別樣式設定
+    // =========================================================================
+    const state = {
+      gender: '',
+      airway: [],
+      breathing: [],
+      circulation: []
+    };
+
+    const ALL_OPTIONS = {
+      airway: ['鼻咽', '口咽', 'SGA'],
+      breathing: ['一般面罩', '非再面罩', '霧化面罩'],
+      circulation: ['靜脈注射', '抬高下肢', '口服液體']
+    };
+
+    const CATEGORY_STYLES = {
+      airway: {
+        activeBtn: ['bg-blue-700', 'border-blue-800', 'text-white', 'shadow-md', 'ring-2', 'ring-blue-300'],
+        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700'],
+        activeTag: 'bg-blue-700 text-white border-blue-800'
+      },
+      breathing: {
+        activeBtn: ['bg-teal-700', 'border-teal-800', 'text-white', 'shadow-md', 'ring-2', 'ring-teal-300'],
+        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700'],
+        activeTag: 'bg-teal-700 text-white border-teal-800'
+      },
+      circulation: {
+        activeBtn: ['bg-red-600', 'border-red-700', 'text-white', 'shadow-md', 'ring-2', 'ring-red-300'],
+        inactiveBtn: ['bg-slate-50', 'border-slate-200', 'text-slate-700'],
+        activeTag: 'bg-red-600 text-white border-red-700'
+      }
+    };
+
+    // =========================================================================
+    // 時間格式化與初始化
+    // =========================================================================
+    function setNowTime(notify = false) {
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const localIso = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+      document.getElementById('recordTime').value = localIso;
+      updatePreview();
+      if (notify) {
+        showToast('已更新為目前系統時間', '🕒');
+      }
+    }
+
+    function getFormattedDateTime() {
+      const raw = document.getElementById('recordTime').value;
+      if (!raw) {
+        return { display: '未設定時間', short: '--/-- --:--', fileTag: '00000000_0000' };
+      }
+      const [datePart, timePart] = raw.split('T');
+      const [y, m, d] = datePart.split('-');
+      const [hh, mm] = (timePart || '00:00').split(':');
+      return {
+        display: `${y}/${m}/${d} ${hh}:${mm}`,
+        short: `${m}/${d} ${hh}:${mm}`,
+        fileTag: `${y}${m}${d}_${hh}${mm}`
+      };
+    }
+
+    // =========================================================================
+    // 互動點擊處理：生理性別 & 處置項目
+    // =========================================================================
+    function selectGender(btnElement) {
+      const val = btnElement.getAttribute('data-value');
+      const allBtns = document.querySelectorAll('.gender-btn');
+
+      // 若點擊已選取的按鈕，則取消選取
+      if (state.gender === val) {
+        state.gender = '';
+      } else {
+        state.gender = val;
+      }
+
+      allBtns.forEach(b => {
+        const bVal = b.getAttribute('data-value');
+        b.classList.remove(
+          'bg-blue-700', 'border-blue-800', 'ring-blue-300',
+          'bg-rose-600', 'border-rose-700', 'ring-rose-300',
+          'text-white', 'shadow-md', 'ring-2'
+        );
+        b.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-700');
+
+        if (state.gender === bVal) {
+          b.classList.remove('bg-slate-50', 'border-slate-200', 'text-slate-700');
+          if (bVal === '男') {
+            b.classList.add('bg-blue-700', 'border-blue-800', 'text-white', 'shadow-md', 'ring-2', 'ring-blue-300');
+          } else {
+            b.classList.add('bg-rose-600', 'border-rose-700', 'text-white', 'shadow-md', 'ring-2', 'ring-rose-300');
+          }
+        }
+      });
+
+      updatePreview();
+    }
+
+    function toggleTreatment(btnElement) {
+      const category = btnElement.parentElement.getAttribute('data-category');
+      const value = btnElement.getAttribute('data-value');
+      const styleSet = CATEGORY_STYLES[category];
+      const idx = state[category].indexOf(value);
+
+      if (idx > -1) {
+        state[category].splice(idx, 1);
+        btnElement.classList.remove(...styleSet.activeBtn);
+        btnElement.classList.add(...styleSet.inactiveBtn);
+      } else {
+        state[category].push(value);
+        btnElement.classList.remove(...styleSet.inactiveBtn);
+        btnElement.classList.add(...styleSet.activeBtn);
+      }
+
+      updatePreview();
+    }
+
+    // =========================================================================
+    // 即時更新匯出圖片預覽卡
+    // =========================================================================
+    function renderCategoryTags(category, containerId, rowId, hideUnselected) {
+      const container = document.getElementById(containerId);
+      const row = document.getElementById(rowId);
+      const selectedList = state[category];
+      const options = ALL_OPTIONS[category];
+      const activeClass = CATEGORY_STYLES[category].activeTag;
+
+      container.innerHTML = '';
+
+      if (hideUnselected && selectedList.length === 0) {
+        row.classList.add('hidden');
+        return;
+      } else {
+        row.classList.remove('hidden');
+      }
+
+      options.forEach(opt => {
+        const isSelected = selectedList.includes(opt);
+        if (hideUnselected && !isSelected) return;
+
+        const badge = document.createElement('span');
+        if (isSelected) {
+          badge.className = `inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border text-sm font-black shadow-xs ${activeClass}`;
+          badge.innerHTML = `<span>✔</span><span>${opt}</span>`;
+        } else {
+          badge.className = 'inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 text-sm font-bold';
+          badge.innerHTML = `<span>☐</span><span>${opt}</span>`;
+        }
+        container.appendChild(badge);
+      });
+    }
+
+    function updatePreview() {
+      const timeObj = getFormattedDateTime();
+      document.getElementById('previewTimeBadge').textContent = timeObj.short;
+      document.getElementById('previewFullTimestamp').textContent = `記錄時間：${timeObj.display}`;
+
+      // 姓名
+      const nameVal = document.getElementById('patientName').value.trim();
+      const previewNameEl = document.getElementById('previewName');
+      if (nameVal) {
+        previewNameEl.textContent = nameVal;
+        previewNameEl.classList.remove('text-slate-400');
+        previewNameEl.classList.add('text-slate-900');
+      } else {
+        previewNameEl.textContent = '未填寫';
+        previewNameEl.classList.remove('text-slate-900');
+        previewNameEl.classList.add('text-slate-400');
+      }
+
+      // 性別
+      const previewGenderEl = document.getElementById('previewGender');
+      if (state.gender === '男') {
+        previewGenderEl.textContent = '♂ 男性';
+        previewGenderEl.className = 'text-xl font-black text-blue-700';
+      } else if (state.gender === '女') {
+        previewGenderEl.textContent = '♀ 女性';
+        previewGenderEl.className = 'text-xl font-black text-rose-600';
+      } else {
+        previewGenderEl.textContent = '未選取';
+        previewGenderEl.className = 'text-xl font-black text-slate-400';
+      }
+
+      // 處置項目
+      const hideUnselected = document.getElementById('hideUnselectedToggle').checked;
+      renderCategoryTags('airway', 'previewAirwayTags', 'previewRowAirway', hideUnselected);
+      renderCategoryTags('breathing', 'previewBreathingTags', 'previewRowBreathing', hideUnselected);
+      renderCategoryTags('circulation', 'previewCirculationTags', 'previewRowCirculation', hideUnselected);
+
+      // 其他處置
+      const otherVal = document.getElementById('otherTreatment').value.trim();
+      const previewOtherEl = document.getElementById('previewOther');
+      const previewRowOther = document.getElementById('previewRowOther');
+      if (otherVal) {
+        previewRowOther.classList.remove('hidden');
+        previewOtherEl.textContent = otherVal;
+        previewOtherEl.classList.remove('text-slate-400');
+        previewOtherEl.classList.add('text-slate-800');
+      } else {
+        if (hideUnselected) {
+          previewRowOther.classList.add('hidden');
+        } else {
+          previewRowOther.classList.remove('hidden');
+          previewOtherEl.textContent = '無補充說明';
+          previewOtherEl.classList.remove('text-slate-800');
+          previewOtherEl.classList.add('text-slate-400');
+        }
+      }
+    }
+
     // =========================================================================
     // 匯出並直接透過系統原生分享選單分享 PNG 圖片 (Web Share API + Fallback)
     // =========================================================================
@@ -541,8 +759,12 @@
     let toastTimer = null;
     function showToast(message, icon = '✅') {
       const toast = document.getElementById('toast');
-      document.getElementById('toastMsg').textContent = message;
-      document.getElementById('toastIcon').textContent = icon;
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+      if (!toast || !toastMsg || !toastIcon) return;
+
+      toastMsg.textContent = message;
+      toastIcon.textContent = icon;
 
       toast.classList.remove('opacity-0', '-translate-y-2');
       toast.classList.add('opacity-100', 'translate-y-0');
@@ -553,6 +775,11 @@
         toast.classList.add('opacity-0', '-translate-y-2');
       }, 2600);
     }
+
+    // 網頁載入後初始化時間與預覽
+    window.addEventListener('DOMContentLoaded', () => {
+      setNowTime(false);
+    });
   </script>
 </body>
 </html>
