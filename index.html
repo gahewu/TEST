@@ -222,20 +222,22 @@
       <!-- 實際被 html2canvas 擷取的卡片容器 -->
       <div id="exportCard" class="bg-white rounded-2xl border-2 border-slate-800 shadow-lg overflow-hidden">
         <!-- 卡片頁首 -->
-        <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between border-b-4 border-red-600">
-          <div class="flex items-center space-x-2.5">
-            <div class="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center font-black text-white text-xl leading-none">
-              +
+        <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between gap-3 border-b-4 border-red-600">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="3.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5" />
+              </svg>
             </div>
-            <div>
-              <div class="text-lg font-black tracking-wider">救護現場處置紀錄單</div>
-              <div class="text-[11px] text-slate-300 font-mono tracking-widest">EMS PRE-HOSPITAL CARE RECORD</div>
+            <div class="min-w-0">
+              <div class="text-lg font-black tracking-wider leading-snug">救護現場處置紀錄單</div>
+              <div class="text-[11px] text-slate-300 font-mono tracking-wider leading-tight mt-0.5">EMS PRE-HOSPITAL CARE RECORD</div>
             </div>
           </div>
-          <div class="text-right">
-            <span class="inline-block px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-xs font-mono font-bold text-amber-300" id="previewTimeBadge">
-              --/--/-- --:--
-            </span>
+          <div class="shrink-0 bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-center">
+            <div class="text-xs font-mono font-bold text-amber-300 leading-tight whitespace-nowrap" id="previewTimeBadge">
+              --/-- --:--
+            </div>
           </div>
         </div>
 
@@ -245,12 +247,12 @@
           <!-- 基本資料列 -->
           <div class="grid grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
             <div class="col-span-2 border-r border-slate-200 pr-3">
-              <div class="text-xs font-bold text-slate-400 mb-0.5">患者姓名 PATIENT NAME</div>
-              <div id="previewName" class="text-xl font-black text-slate-900 tracking-wide">未填寫</div>
+              <div class="text-xs font-bold text-slate-400 mb-1 leading-tight">患者姓名 PATIENT NAME</div>
+              <div id="previewName" class="text-xl font-black text-slate-900 tracking-wide leading-snug">未填寫</div>
             </div>
             <div class="pl-1">
-              <div class="text-xs font-bold text-slate-400 mb-0.5">生理性別 SEX</div>
-              <div id="previewGender" class="text-xl font-black text-slate-900">未選取</div>
+              <div class="text-xs font-bold text-slate-400 mb-1 leading-tight">生理性別 SEX</div>
+              <div id="previewGender" class="text-xl font-black text-slate-900 leading-snug">未選取</div>
             </div>
           </div>
 
@@ -258,39 +260,39 @@
           <div class="space-y-3">
             <!-- 呼吸道 -->
             <div id="previewRowAirway" class="rounded-xl border border-slate-200 p-3.5">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-black text-blue-800 bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-200">呼吸道處置 AIRWAY</span>
+              <div class="mb-2.5">
+                <span class="inline-block text-xs font-black text-blue-800 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200 leading-none">呼吸道處置 AIRWAY</span>
               </div>
               <div id="previewAirwayTags" class="flex flex-wrap gap-2"></div>
             </div>
 
             <!-- 呼吸 -->
             <div id="previewRowBreathing" class="rounded-xl border border-slate-200 p-3.5">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-black text-teal-800 bg-teal-50 px-2.5 py-0.5 rounded-md border border-teal-200">呼吸處置 BREATHING</span>
+              <div class="mb-2.5">
+                <span class="inline-block text-xs font-black text-teal-800 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200 leading-none">呼吸處置 BREATHING</span>
               </div>
               <div id="previewBreathingTags" class="flex flex-wrap gap-2"></div>
             </div>
 
             <!-- 循環 -->
             <div id="previewRowCirculation" class="rounded-xl border border-slate-200 p-3.5">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-black text-red-800 bg-red-50 px-2.5 py-0.5 rounded-md border border-red-200">循環處置 CIRCULATION</span>
+              <div class="mb-2.5">
+                <span class="inline-block text-xs font-black text-red-800 bg-red-50 px-2.5 py-1 rounded-md border border-red-200 leading-none">循環處置 CIRCULATION</span>
               </div>
               <div id="previewCirculationTags" class="flex flex-wrap gap-2"></div>
             </div>
 
             <!-- 其他處置 -->
             <div id="previewRowOther" class="rounded-xl border border-slate-200 p-3.5 bg-amber-50/40">
-              <div class="text-xs font-black text-amber-900 mb-1.5 flex items-center space-x-1">
-                <span>其他處置與補充說明 OTHER NOTES</span>
+              <div class="text-xs font-black text-amber-900 mb-1.5 leading-tight">
+                其他處置與補充說明 OTHER NOTES
               </div>
               <div id="previewOther" class="text-sm sm:text-base font-bold text-slate-800 whitespace-pre-wrap break-words leading-relaxed">無補充說明</div>
             </div>
           </div>
 
           <!-- 卡片頁尾時間戳記 -->
-          <div class="pt-2 border-t border-dashed border-slate-300 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+          <div class="pt-2.5 border-t border-dashed border-slate-300 flex items-center justify-between text-[11px] text-slate-400 font-mono leading-tight">
             <span>EMS FIELD LOG SYSTEM</span>
             <span id="previewFullTimestamp">記錄時間：--</span>
           </div>
@@ -517,13 +519,21 @@
         const isSelected = selectedList.includes(opt);
         if (hideUnselected && !isSelected) return;
 
-        const badge = document.createElement('span');
+        const badge = document.createElement('div');
         if (isSelected) {
-          badge.className = `inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border text-sm font-black shadow-xs ${activeClass}`;
-          badge.innerHTML = `<span>✔</span><span>${opt}</span>`;
+          badge.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-sm font-black ${activeClass}`;
+          badge.innerHTML = `
+            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="leading-none">${opt}</span>
+          `;
         } else {
-          badge.className = 'inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 text-sm font-bold';
-          badge.innerHTML = `<span>☐</span><span>${opt}</span>`;
+          badge.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 text-sm font-bold';
+          badge.innerHTML = `
+            <span class="w-3.5 h-3.5 rounded-xs border-2 border-slate-300 inline-block shrink-0"></span>
+            <span class="leading-none">${opt}</span>
+          `;
         }
         container.appendChild(badge);
       });
@@ -635,11 +645,25 @@
         await document.fonts.ready;
 
         // 使用 html2canvas 產生高解析度畫布 (scale: 3)
+        // 透過 onclone 修正 Tailwind CSS Preflight 造成的文字垂直基準線下移問題
         const canvas = await html2canvas(cardElement, {
           scale: 3,
           backgroundColor: '#ffffff',
           useCORS: true,
-          logging: false
+          logging: false,
+          onclone: (clonedDoc) => {
+            const style = clonedDoc.createElement('style');
+            style.textContent = `
+              #exportCard * {
+                box-sizing: border-box;
+              }
+              #exportCard img, #exportCard svg {
+                display: inline-block !important;
+                vertical-align: middle !important;
+              }
+            `;
+            clonedDoc.head.appendChild(style);
+          }
         });
 
         // 組合檔名：救護處置_YYYYMMDD_HHMM_患者姓名.png
